@@ -1,16 +1,16 @@
-import { Symbol } from './Symbol.js';
+import { Symbol } from "./Symbol.js";
 
-const symbol00 = new Symbol(0, 'Strawberry');
-const symbol01 = new Symbol(1, 'Watermelon');
-const symbol02 = new Symbol(2, 'Grape');
-const symbol03 = new Symbol(3, 'Orange');
+const symbol00 = new Symbol(0, "Strawberry");
+const symbol01 = new Symbol(1, "Watermelon");
+const symbol02 = new Symbol(2, "Grape");
+const symbol03 = new Symbol(3, "Orange");
 //const //slotInfo04 = new Slot(4, 'Clover');
 //const //slotInfo05 = new Slot(5, 'Apple');
 //const //slotInfo06 = new Slot(6, 'Horseshoe');
 //const //slotInfo07 = new Slot(7, 'Seven');
 
-export const wildcardSymbol = new Symbol(4, 'Diamond');
-export const wildcardBigWinSymbol = new Symbol(5, 'Big Win');
+export const wildcardSymbol = new Symbol(4, "Diamond");
+export const wildcardBigWinSymbol = new Symbol(5, "Big Win");
 
 export const strips: Symbol[][] = [];
 export const symbols: Symbol[] = [];

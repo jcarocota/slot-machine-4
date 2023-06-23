@@ -1,13 +1,12 @@
 import {
   strips,
-  wildcardSymbol,
-  wildcardBigWinSymbol,
   symbols,
-} from './SlotStrips.js';
-import { paylines } from './SlotPaylines.js';
-import { Payline } from './Payline.js';
-import { GottenPaylineInfo } from './GottenPaylineInfo.js';
-import { Symbol } from './Symbol.js';
+  wildcardBigWinSymbol,
+  wildcardSymbol,
+} from "./SlotStrips.js";
+import { paylines } from "./SlotPaylines.js";
+import { Payline } from "./Payline.js";
+import { GottenPaylineInfo } from "./GottenPaylineInfo.js";
 
 export class SlotMachine {
   readonly numberOfStrips = strips.length;
@@ -114,7 +113,7 @@ export class SlotMachine {
   ) => {
     let amountTotalWin = gottenPaylinesInfo.reduce(
       (total, paylineInfo: GottenPaylineInfo) =>
-        (total += paylineInfo.amountWinByLine),
+        total + paylineInfo.amountWinByLine,
       0
     );
 
@@ -123,7 +122,7 @@ export class SlotMachine {
     return amountTotalWin;
   };
 
-  spin = (stake: number) => {
+  spin = (stake: number, idRequest: number) => {
     const symbolsArray = this.generateSymbolsArray();
     const gottenPaylinesInfo = this.calculatePaylines(symbolsArray, stake);
     const amountTotalWin = this.calculateAmountTotalWin(gottenPaylinesInfo);
@@ -137,7 +136,8 @@ export class SlotMachine {
     this.moneyBalance =
       Math.round((this.moneyBalance + Number.EPSILON) * 100) / 100;
 
-    const result = {
+    return {
+      idRequest: idRequest,
       symbolsArray: symbolsArray,
       gottenPaylinesInfo: gottenPaylinesInfo,
       moneyBalance: this.moneyBalance,
@@ -145,20 +145,28 @@ export class SlotMachine {
       //wildcard: wildcard,
       //wildcardBigWin: wildcardBigWin,
     };
-
-    return result;
   };
 
-  get strips(): Symbol[][] {
-    return strips;
-  }
+  stripsArray = (idRequest: number) => {
+    return {
+      idRequest: idRequest,
+      strips: strips,
+    };
+  };
 
-  symbolsDescription = () => {
-    let result = {
+  symbolsDescription = (idRequest: number) => {
+    return {
+      idRequest: idRequest,
       symbols: symbols,
       wildcardSymbolId: wildcardSymbol.id,
       wildcardBigWinSymbolId: wildcardBigWinSymbol.id,
     };
-    return result;
+  };
+
+  getMoneyBalance = (idRequest: number) => {
+    return {
+      idRequest: idRequest,
+      moneyBalance: this.moneyBalance,
+    };
   };
 }

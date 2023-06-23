@@ -1,4 +1,4 @@
-import { Payline } from './Payline.js';
+import { Payline } from "./Payline.js";
 
 export class GottenPaylineInfo {
   payline: Payline;
