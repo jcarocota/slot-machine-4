@@ -1,6 +1,9 @@
+import {gameConfig} from "../config/GameConfig.ts";
 export class GameSocketClient extends WebSocket {
   constructor() {
-    super("ws://localhost:3000/");
+    const url = `ws://${gameConfig.wsUrl}:${gameConfig.wsPort}/`;
+
+    super(url);
     this.loadListeners();
   }
 
@@ -61,7 +64,8 @@ export class GameSocketClient extends WebSocket {
     }
   };
 
-  balance = (idRequest: number) => {
+  balance = () => {
+    const idRequest = new Date().getTime();
     const query = {
       idRequest: idRequest,
       action: "balance",
@@ -69,5 +73,6 @@ export class GameSocketClient extends WebSocket {
       stake: 1,
     };
     this.sendMessage(JSON.stringify(query));
+    return idRequest;
   };
 }

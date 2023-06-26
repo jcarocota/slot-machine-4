@@ -1,9 +1,17 @@
 import * as PIXI from "pixi.js";
-import { globals } from "./Globals.ts";
-import { GameSocketClient } from "./GameSocketClient.ts";
+import { GameSocketClient } from "./ws/GameSocketClient.ts";
 
 export class App extends PIXI.Application {
-  constructor() {
+  private static _instance:App;
+
+  private readonly _gameSocketClient: GameSocketClient = new GameSocketClient();
+
+  private _settings = {
+    appWitdh: 0,
+    appHeight: 0
+  }
+
+  private constructor() {
     super({
       background: "#1099bb",
       resizeTo: window,
@@ -20,16 +28,35 @@ export class App extends PIXI.Application {
     //Add window rezise event. Slot Machine should resize too
     window.addEventListener("resize", this.onWindowResize);
 
-    const gameSocketClient = new GameSocketClient();
-    gameSocketClient.balance(123);
+    //const gameSocketClient = new GameSocketClient();
+    //globals["gameSocketClient"] = gameSocketClient;
+    const idRequest = this._gameSocketClient.balance();
+    console.log("Balance... ID Request", idRequest);
   };
 
   private calculateWindowSize = () => {
-    globals.appWitdh = window.innerWidth;
-    globals.appHeight = window.innerHeight;
-    console.log("Globals modified:", globals);
+    this._settings.appWitdh = window.innerWidth;
+    this._settings.appHeight = window.innerHeight;
+    console.log("App Settings modified:", this._settings);
   };
   private onWindowResize = () => {
     this.calculateWindowSize();
   };
+
+  get gameSocketClient() {
+    return this._gameSocketClient;
+  }
+
+  get settings() {
+    return this._settings;
+  }
+
+  static get instance(): App {
+    if(!this._instance) {
+      this._instance = new App();
+    }
+
+    return this._instance;
+  }
+
 }
