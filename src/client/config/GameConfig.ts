@@ -1,10 +1,11 @@
-import {userConfig, UserConfig} from "./UserConfig.ts";
+import { userConfig, UserConfig } from "./UserConfig.ts";
 
-interface GameConfig extends UserConfig {
-
-}
+interface GameConfig extends UserConfig {}
 
 export const gameConfig: GameConfig = {
-    wsUrl: userConfig.wsUrl,
-    wsPort: userConfig.wsPort,
-}
+  aspectRatioWidth: userConfig.aspectRatioWidth,
+  aspectRatioHeight: userConfig.aspectRatioHeight,
+  backgroundAppColor: userConfig.backgroundAppColor,
+  wsUrl: userConfig.wsUrl,
+  wsPort: userConfig.wsPort,
+};

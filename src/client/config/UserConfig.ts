@@ -1,9 +1,15 @@
 export interface UserConfig {
-    wsUrl: string;
-    wsPort: number;
+  aspectRatioWidth: number;
+  aspectRatioHeight: number;
+  backgroundAppColor: number;
+  wsUrl: string;
+  wsPort: number;
 }
 
-export const userConfig:UserConfig = {
-    wsUrl: "localhost",
-    wsPort: 3000
-}
+export const userConfig: UserConfig = {
+  aspectRatioWidth: 16,
+  aspectRatioHeight: 9,
+  backgroundAppColor: 0xffffff,
+  wsUrl: "localhost",
+  wsPort: 3000,
+};

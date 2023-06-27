@@ -1,5 +1,15 @@
-import {gameConfig} from "../config/GameConfig.ts";
+import { gameConfig } from "../config/GameConfig.ts";
+import {
+  RequestInfo,
+  RequestStatus,
+  RequestType,
+  RequestValues,
+} from "./RequestInfo.ts";
+
 export class GameSocketClient extends WebSocket {
+  private static _instance: GameSocketClient;
+
+  private readonly pendingRequests = new Map<number, RequestInfo>();
   constructor() {
     const url = `ws://${gameConfig.wsUrl}:${gameConfig.wsPort}/`;
 
@@ -18,7 +28,21 @@ export class GameSocketClient extends WebSocket {
 
     // Listen for messages from the server
     super.addEventListener("message", (event) => {
-      console.log("Message from server:", event.data);
+      //console.log("Message from server:", event.data);
+
+      try {
+        const jsonData = JSON.parse(event.data);
+
+        const request = this.pendingRequests.get(Number(jsonData["idRequest"]));
+
+        if (request) {
+          request.requestStatus = RequestStatus.resolved;
+          request.data = jsonData;
+        }
+      } catch (e) {
+        console.log("Unable to convert to JSON. Data received:", event.data);
+        //console.error(e);
+      }
     });
 
     // Handle errors
@@ -64,15 +88,72 @@ export class GameSocketClient extends WebSocket {
     }
   };
 
+  private addRequestToTrackingMap = (
+    idRequest: number,
+    requestType: RequestType
+  ) => {
+    const request: RequestInfo = {
+      idRequest: idRequest,
+      requestType: requestType,
+      requestStatus: RequestStatus.pending,
+      data: undefined,
+    };
+
+    this.pendingRequests.set(idRequest, request);
+  };
+
+  private removeRequestToTrackingMap = (idRequest: number) => {
+    this.pendingRequests.delete(idRequest);
+  };
+
+  getRequestData = (idRequest: number) => {
+    const request = this.pendingRequests.get(idRequest);
+
+    let data;
+
+    if (request && request.requestStatus == RequestStatus.resolved) {
+      data = request.data;
+      this.removeRequestToTrackingMap(idRequest);
+    }
+
+    return data;
+  };
+
   balance = () => {
     const idRequest = new Date().getTime();
-    const query = {
+    const query: RequestValues = {
       idRequest: idRequest,
       action: "balance",
       user: "guest",
       stake: 1,
     };
     this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.balance);
+
     return idRequest;
   };
+
+  spin = (stake: number) => {
+    const idRequest = new Date().getTime();
+    const query: RequestValues = {
+      idRequest: idRequest,
+      action: "spin",
+      user: "guest",
+      stake: stake,
+    };
+    this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.balance);
+
+    return idRequest;
+  };
+
+  static get instance(): GameSocketClient {
+    if (!this._instance) {
+      this._instance = new GameSocketClient();
+    }
+
+    return this._instance;
+  }
 }
