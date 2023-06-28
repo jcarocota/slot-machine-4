@@ -38,6 +38,16 @@ export class GameSocketClient extends WebSocket {
         if (request) {
           request.requestStatus = RequestStatus.resolved;
           request.data = jsonData;
+          if (request.event) {
+            request.event(jsonData);
+          }
+
+          console.log(
+            "Request ID:",
+            request.idRequest,
+            "resolved. Data:",
+            jsonData
+          );
         }
       } catch (e) {
         console.log("Unable to convert to JSON. Data received:", event.data);
@@ -90,13 +100,15 @@ export class GameSocketClient extends WebSocket {
 
   private addRequestToTrackingMap = (
     idRequest: number,
-    requestType: RequestType
+    requestType: RequestType,
+    event: ((data: any) => void) | undefined
   ) => {
     const request: RequestInfo = {
       idRequest: idRequest,
       requestType: requestType,
       requestStatus: RequestStatus.pending,
       data: undefined,
+      event: event,
     };
 
     this.pendingRequests.set(idRequest, request);
@@ -119,8 +131,8 @@ export class GameSocketClient extends WebSocket {
     return data;
   };
 
-  balance = () => {
-    const idRequest = new Date().getTime();
+  balance = (event: ((data: any) => void) | undefined) => {
+    const idRequest = this.genetareIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "balance",
@@ -129,13 +141,13 @@ export class GameSocketClient extends WebSocket {
     };
     this.sendMessage(JSON.stringify(query));
 
-    this.addRequestToTrackingMap(idRequest, RequestType.balance);
+    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
 
     return idRequest;
   };
 
-  spin = (stake: number) => {
-    const idRequest = new Date().getTime();
+  spin = (stake: number, event: ((data: any) => void) | undefined) => {
+    const idRequest = this.genetareIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "spin",
@@ -144,9 +156,47 @@ export class GameSocketClient extends WebSocket {
     };
     this.sendMessage(JSON.stringify(query));
 
-    this.addRequestToTrackingMap(idRequest, RequestType.balance);
+    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
 
     return idRequest;
+  };
+
+  symbols = (event: ((data: any) => void) | undefined) => {
+    const stake = 1;
+    const idRequest = this.genetareIdRequest();
+    const query: RequestValues = {
+      idRequest: idRequest,
+      action: "symbols",
+      user: "guest",
+      stake: stake,
+    };
+    this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
+
+    return idRequest;
+  };
+
+  strips = (event: ((data: any) => void) | undefined) => {
+    const stake = 1;
+    const idRequest = this.genetareIdRequest();
+    const query: RequestValues = {
+      idRequest: idRequest,
+      action: "strips",
+      user: "guest",
+      stake: stake,
+    };
+    this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.strips, event);
+
+    return idRequest;
+  };
+
+  private genetareIdRequest = () => {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0];
   };
 
   static get instance(): GameSocketClient {

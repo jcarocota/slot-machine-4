@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { globalSettings } from "../GlobalSettings.ts";
 
 export class FrameRateInfo extends PIXI.Container {
   private text = new PIXI.Text();
@@ -19,7 +20,10 @@ export class FrameRateInfo extends PIXI.Container {
     this.draw();
 
     PIXI.Ticker.shared.add(
-      () => (this.text.text = `FPS: ${Math.round(PIXI.Ticker.shared.FPS)}`)
+      () =>
+        (this.text.text = `FPS: ${Math.round(
+          PIXI.Ticker.shared.FPS
+        )}\t\t\tBalance: ${globalSettings.moneyBalance} USD`)
     );
 
     this.addChild(this.text);

@@ -23,4 +23,10 @@ export interface RequestInfo {
   requestType: RequestType;
   requestStatus: RequestStatus;
   data: any;
+  event: ((data: any) => void) | undefined;
+}
+
+export interface balanceResponse {
+  idRequest: number;
+  moneyBalance: number;
 }
