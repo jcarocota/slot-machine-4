@@ -1,4 +1,7 @@
-import { Strip, Symbol } from "./ws/InterfaceResponse.ts";
+import * as PIXI from "pixi.js";
+import { Strip, SymbolSlot } from "./ws/InterfaceResponse.ts";
+import { gameConfig } from "./config/GameConfig.ts";
+
 interface GlobalSettings {
   moneyBalance: number | undefined;
   windowWidth: number;
@@ -7,8 +10,12 @@ interface GlobalSettings {
   slotMachineHeight: number;
   slotMachinePosX: number;
   slotMachinePosY: number;
-  symbols: Symbol[];
+  slotTextureSheet?: PIXI.Spritesheet;
+  slotBlurredTextureSheet?: PIXI.Spritesheet;
+  slotSemiBlurredTextureSheet?: PIXI.Spritesheet;
+  symbols: SymbolSlot[];
   strips: Strip[];
+  questionMarkTexture: PIXI.Texture;
 }
 
 export const globalSettings: GlobalSettings = {
@@ -21,4 +28,5 @@ export const globalSettings: GlobalSettings = {
   slotMachinePosY: 0,
   symbols: [],
   strips: [],
+  questionMarkTexture: PIXI.Texture.from(gameConfig.questionMarkAsset),
 };

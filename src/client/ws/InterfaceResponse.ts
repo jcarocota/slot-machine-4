@@ -1,16 +1,16 @@
-export interface Symbol {
+export interface SymbolSlot {
   id: number;
   description: string;
 }
 
 export interface SymbolsResponse {
   idRequest: number;
-  symbols: Symbol[];
+  symbols: SymbolSlot[];
   wildcardSymbolId: number;
   wildcardBigWinSymbolId: number;
 }
 
-export type Strip = Symbol[];
+export type Strip = SymbolSlot[];
 
 export interface StripsResponse {
   idRequest: number;

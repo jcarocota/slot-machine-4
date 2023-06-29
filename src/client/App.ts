@@ -24,21 +24,10 @@ export class App extends PIXI.Application {
     });
 
     this.loadApp();
-    this.createUI();
-    this.loadEvents();
   }
 
   private loadApp = () => {
     this.loadGameData();
-
-    this.calculateWindowSize();
-    this.calculateSlotMachineDimentions();
-    this.calculateSlotMachinePosition();
-
-    //const gameSocketClient = new GameSocketClient();
-    //globals["gameSocketClient"] = gameSocketClient;
-    //const idRequest = this._gameSocketClient.balance();
-    //console.log("Balance... ID Request", idRequest);
   };
 
   private loadGameData = () => {
@@ -76,7 +65,10 @@ export class App extends PIXI.Application {
       ) {
         PIXI.Ticker.shared.remove(checkIfAppLoaded);
         console.log("App Loaded");
-        this.onWindowResize();
+        //this.onWindowResize();
+        this.loadGameAssets();
+
+
       }
     };
 
@@ -94,6 +86,42 @@ export class App extends PIXI.Application {
     console.info(
       "Retrieving Money Balance. Request ID:",
       idRequestMoneyBalance
+    );
+  };
+
+  private loadGameAssets = () => {
+    let urlSpriteSheets: string[] = [];
+    urlSpriteSheets.push(gameConfig.slotMachineSheet);
+    urlSpriteSheets.push(gameConfig.slotMachineBlurredSheet);
+    urlSpriteSheets.push(gameConfig.slotMachineSemiBlurredSheet);
+
+    PIXI.Assets.load(urlSpriteSheets).then(
+      (sheets: Record<string, PIXI.Spritesheet>) => {
+        globalSettings.slotTextureSheet = sheets[gameConfig.slotMachineSheet];
+        globalSettings.slotBlurredTextureSheet =
+          sheets[gameConfig.slotMachineBlurredSheet];
+        globalSettings.slotSemiBlurredTextureSheet =
+          sheets[gameConfig.slotMachineSemiBlurredSheet];
+        console.log(
+          "globalSettings.slotTextureSheet=",
+          globalSettings.slotTextureSheet
+        );
+        console.log(
+          "globalSettings.slotBlurredTextureSheet=",
+          globalSettings.slotBlurredTextureSheet
+        );
+        console.log(
+          "globalSettings.slotSemiBlurredTextureSheet=",
+          globalSettings.slotSemiBlurredTextureSheet
+        );
+
+        this.calculateWindowSize();
+        this.calculateSlotMachineDimentions();
+        this.calculateSlotMachinePosition();
+
+        this.createUI();
+        this.loadEvents();
+      }
     );
   };
 
