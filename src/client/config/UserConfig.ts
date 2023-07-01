@@ -12,8 +12,8 @@ export interface UserConfig {
 }
 
 export const userConfig: UserConfig = {
-  aspectRatioWidth: 16,
-  aspectRatioHeight: 9,
+  aspectRatioWidth: 4,
+  aspectRatioHeight: 3,
   backgroundAppColor: 0xffffff,
   backgroundReelColor: 0x0d2331,
   questionMarkAsset: "./src/client/assets/question_mark.png",

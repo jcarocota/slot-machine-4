@@ -8,11 +8,15 @@ import {
   StripsResponse,
   SymbolsResponse,
 } from "./ws/InterfaceResponse.ts";
+import {LoadingBar} from "./ui/LoadingBar.ts";
 
 export class App extends PIXI.Application {
   private static _instance: App;
   // @ts-ignore
   private slotMachine: SlotMachine;
+
+  // @ts-ignore
+  private loadingBar: LoadingBar;
 
   private gameSocketClient: GameSocketClient = GameSocketClient.instance;
 
@@ -27,6 +31,9 @@ export class App extends PIXI.Application {
   }
 
   private loadApp = () => {
+    this.loadingBar = new LoadingBar();
+    this.stage.addChild(this.loadingBar);
+
     this.loadGameData();
   };
 
@@ -121,6 +128,8 @@ export class App extends PIXI.Application {
 
         this.createUI();
         this.loadEvents();
+
+        this.stage.removeChild(this.loadingBar);
       }
     );
   };
@@ -167,10 +176,12 @@ export class App extends PIXI.Application {
   };
 
   private onWindowResize = () => {
+
     this.calculateWindowSize();
     this.calculateSlotMachineDimentions();
     this.calculateSlotMachinePosition();
 
+    this.loadingBar.resize();
     this.slotMachine.resize();
   };
 
