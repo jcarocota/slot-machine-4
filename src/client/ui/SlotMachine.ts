@@ -3,7 +3,7 @@ import { globalSettings } from "../GlobalSettings.ts";
 import { Button } from "./Button.ts";
 import { FrameRateInfo } from "./FrameRateInfo.ts";
 import { ReelsWindow } from "./ReelsWindow.ts";
-import {Option, SelectOneBox} from "./SelectOneBox.ts";
+import { Option, SelectOneBox } from "./SelectOneBox.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -79,20 +79,31 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private createStakeSelectOneBox = () => {
-    const {stakeSelectOneBoxWidth, stakeSelectOneBoxHeight, stakeSelectOneBoxX, stakeSelectOneBoxY} =this.calculateBoundsStakeSelectOneBox();
+    const {
+      stakeSelectOneBoxWidth,
+      stakeSelectOneBoxHeight,
+      stakeSelectOneBoxX,
+      stakeSelectOneBoxY,
+    } = this.calculateBoundsStakeSelectOneBox();
     const options: Option[] = [];
-    options.push({value:1, description:'1.00 USD'});
-    options.push({value:1.5, description:'1.50 USD'});
-    options.push({value:2, description:'2.00 USD'});
-    options.push({value:5, description:'5.00 USD'});
-    options.push({value:10, description:'10.00 USD'});
-    options.push({value:20, description:'20.00 USD'});
-    options.push({value:50, description:'50.00 USD'});
-    options.push({value:75, description:'75.00 USD'});
-    options.push({value:100, description:'100.00 USD'});
+    options.push({ value: 1, description: "1.00 USD" });
+    //options.push({ value: 1.5, description: "1.50 USD" });
+    options.push({ value: 2, description: "2.00 USD" });
+    options.push({ value: 5, description: "5.00 USD" });
+    options.push({ value: 10, description: "10.00 USD" });
+    options.push({ value: 20, description: "20.00 USD" });
+    options.push({ value: 50, description: "50.00 USD" });
+    options.push({ value: 75, description: "75.00 USD" });
+    options.push({ value: 100, description: "100.00 USD" });
 
-    this.stakeSelectOneBox = new SelectOneBox(stakeSelectOneBoxWidth,stakeSelectOneBoxHeight, stakeSelectOneBoxX, stakeSelectOneBoxY, options, options[0]);
-
+    this.stakeSelectOneBox = new SelectOneBox(
+      stakeSelectOneBoxWidth,
+      stakeSelectOneBoxHeight,
+      stakeSelectOneBoxX,
+      stakeSelectOneBoxY,
+      options,
+      options[0]
+    );
   };
 
   private calculateBoundsPlayButton = () => {
@@ -130,14 +141,24 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private calculateBoundsStakeSelectOneBox = () => {
-    const stakeSelectOneBoxWidth = globalSettings.slotMachineWidth*0.2;
+    const stakeSelectOneBoxWidth = globalSettings.slotMachineWidth * 0.2;
     const stakeSelectOneBoxHeight = globalSettings.slotMachineHeight * 0.1;
-    const stakeSelectOneBoxX = globalSettings.slotMachinePosX +
-        globalSettings.slotMachineWidth -
-        (globalSettings.slotMachineWidth * 0.25) - stakeSelectOneBoxWidth;
-    const stakeSelectOneBoxY = globalSettings.slotMachinePosY + globalSettings.slotMachineHeight - stakeSelectOneBoxHeight;
+    const stakeSelectOneBoxX =
+      globalSettings.slotMachinePosX +
+      globalSettings.slotMachineWidth -
+      globalSettings.slotMachineWidth * 0.25 -
+      stakeSelectOneBoxWidth;
+    const stakeSelectOneBoxY =
+      globalSettings.slotMachinePosY +
+      globalSettings.slotMachineHeight -
+      stakeSelectOneBoxHeight;
 
-    return { stakeSelectOneBoxWidth, stakeSelectOneBoxHeight, stakeSelectOneBoxX, stakeSelectOneBoxY };
+    return {
+      stakeSelectOneBoxWidth,
+      stakeSelectOneBoxHeight,
+      stakeSelectOneBoxX,
+      stakeSelectOneBoxY,
+    };
   };
 
   resize = () => {
@@ -165,7 +186,12 @@ export class SlotMachine extends PIXI.Container {
     this.reelsWindow.reelsWindowY = reelsWindowY;
     this.reelsWindow.resize();
 
-    const {stakeSelectOneBoxWidth, stakeSelectOneBoxHeight, stakeSelectOneBoxX, stakeSelectOneBoxY} = this.calculateBoundsStakeSelectOneBox();
+    const {
+      stakeSelectOneBoxWidth,
+      stakeSelectOneBoxHeight,
+      stakeSelectOneBoxX,
+      stakeSelectOneBoxY,
+    } = this.calculateBoundsStakeSelectOneBox();
     this.stakeSelectOneBox.selectOneBoxWidth = stakeSelectOneBoxWidth;
     this.stakeSelectOneBox.selectOneBoxHeight = stakeSelectOneBoxHeight;
     this.stakeSelectOneBox.selectOneBoxX = stakeSelectOneBoxX;

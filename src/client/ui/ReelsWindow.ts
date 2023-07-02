@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
-import {Reel} from "./Reel.ts";
-import {Strip} from "../ws/InterfaceResponse.ts";
-import {globalSettings} from "../GlobalSettings.ts";
+import { Reel } from "./Reel.ts";
+import { Strip } from "../ws/InterfaceResponse.ts";
+import { globalSettings } from "../GlobalSettings.ts";
 
 export class ReelsWindow extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -37,14 +37,18 @@ export class ReelsWindow extends PIXI.Container {
 
     this.reels.forEach((reel) => {
       this.addChild(reel);
-    })
-
+    });
   };
 
   private generateReels = () => {
-
-    this.strips.forEach((strip,i) => {
-      const reel: Reel = new Reel(this.reelsWindowWidth/5, (this.reelsWindowHeight/3)*16, (this.reelsWindowX+(this.reelsWindowWidth/5)*i),this.reelsWindowY, strip);
+    this.strips.forEach((strip, i) => {
+      const reel: Reel = new Reel(
+        this.reelsWindowWidth / 5,
+        (this.reelsWindowHeight / 3) * 16,
+        this.reelsWindowX + (this.reelsWindowWidth / 5) * i,
+        this.reelsWindowY,
+        strip
+      );
       this.reels.push(reel);
     });
   };
@@ -59,10 +63,10 @@ export class ReelsWindow extends PIXI.Container {
     );
     this.background.endFill();
 
-    this.reels.forEach((reel, i) =>{
-      reel.reelWidth = this.reelsWindowWidth/5;
-      reel.reelHeight = (this.reelsWindowHeight/3)*16;
-      reel.reelX = (this.reelsWindowX+(this.reelsWindowWidth/5)*i);
+    this.reels.forEach((reel, i) => {
+      reel.reelWidth = this.reelsWindowWidth / 5;
+      reel.reelHeight = (this.reelsWindowHeight / 3) * 16;
+      reel.reelX = this.reelsWindowX + (this.reelsWindowWidth / 5) * i;
       reel.reelY = this.reelsWindowY;
     });
   };
@@ -73,6 +77,6 @@ export class ReelsWindow extends PIXI.Container {
 
     this.reels.forEach((reel) => {
       reel.resize();
-    })
+    });
   };
 }

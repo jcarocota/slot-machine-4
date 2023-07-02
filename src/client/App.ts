@@ -8,7 +8,7 @@ import {
   StripsResponse,
   SymbolsResponse,
 } from "./ws/InterfaceResponse.ts";
-import {LoadingBar} from "./ui/LoadingBar.ts";
+import { LoadingBar } from "./ui/LoadingBar.ts";
 
 export class App extends PIXI.Application {
   private static _instance: App;
@@ -74,8 +74,6 @@ export class App extends PIXI.Application {
         console.log("App Loaded");
         //this.onWindowResize();
         this.loadGameAssets();
-
-
       }
     };
 
@@ -176,7 +174,6 @@ export class App extends PIXI.Application {
   };
 
   private onWindowResize = () => {
-
     this.calculateWindowSize();
     this.calculateSlotMachineDimentions();
     this.calculateSlotMachinePosition();
