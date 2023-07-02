@@ -87,7 +87,7 @@ export class SlotMachine extends PIXI.Container {
     } = this.calculateBoundsStakeSelectOneBox();
     const options: Option[] = [];
     options.push({ value: 1, description: "1.00 USD" });
-    //options.push({ value: 1.5, description: "1.50 USD" });
+    options.push({ value: 1.5, description: "1.50 USD" });
     options.push({ value: 2, description: "2.00 USD" });
     options.push({ value: 5, description: "5.00 USD" });
     options.push({ value: 10, description: "10.00 USD" });
@@ -102,7 +102,8 @@ export class SlotMachine extends PIXI.Container {
       stakeSelectOneBoxX,
       stakeSelectOneBoxY,
       options,
-      options[0]
+      options[0],
+        "Stake"
     );
   };
 
@@ -142,7 +143,7 @@ export class SlotMachine extends PIXI.Container {
 
   private calculateBoundsStakeSelectOneBox = () => {
     const stakeSelectOneBoxWidth = globalSettings.slotMachineWidth * 0.2;
-    const stakeSelectOneBoxHeight = globalSettings.slotMachineHeight * 0.1;
+    const stakeSelectOneBoxHeight = globalSettings.slotMachineHeight * 0.05;
     const stakeSelectOneBoxX =
       globalSettings.slotMachinePosX +
       globalSettings.slotMachineWidth -

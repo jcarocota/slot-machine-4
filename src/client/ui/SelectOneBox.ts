@@ -11,6 +11,10 @@ export type MenuBackgroundOption = {
   option: Option;
   background: PIXI.Graphics;
   text: PIXI.Text;
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 };
 export class SelectOneBox extends PIXI.Container {
   private options: Option[];
@@ -28,6 +32,7 @@ export class SelectOneBox extends PIXI.Container {
   selectOneBoxHeight: number;
   selectOneBoxX: number;
   selectOneBoxY: number;
+  labelText: string;
 
   constructor(
     selectOneBoxWidth: number,
@@ -35,7 +40,8 @@ export class SelectOneBox extends PIXI.Container {
     selectOneBoxX: number,
     selectOneBoxY: number,
     options: Option[],
-    selectedValue: Option
+    selectedValue: Option,
+    labelText: string
   ) {
     super();
 
@@ -46,6 +52,7 @@ export class SelectOneBox extends PIXI.Container {
     this.selectOneBoxX = selectOneBoxX;
     this.selectOneBoxY = selectOneBoxY;
     this.selectedValue = selectedValue;
+    this.labelText = labelText;
 
     this.init();
   }
@@ -61,22 +68,23 @@ export class SelectOneBox extends PIXI.Container {
     this.addChild(this.selectedText);
     this.addChild(this.menu);
 
-    this.background.eventMode = "static";
-    this.background.onpointerover = () => {
-      this.background.alpha = 0.5;
+    this.eventMode = "static";
+
+    this.onpointermove = (e: PIXI.FederatedPointerEvent) => {
+      this.highlightElements(e.y);
       this.menu.visible = true;
     };
-    this.background.onpointerout = () => {
-      this.background.alpha = 1;
+
+    this.onpointerout = () => {
+      this.menu.visible = false;
+      this.unhighlightElements();
     };
 
-    this.onpointerout = (e: PIXI.FederatedPointerEvent) => {
-      this.menu.visible = this.pointerOutsideMenuZone(e.x, e.y);
+    this.onpointerdown = (e: PIXI.FederatedPointerEvent) => {
+      this.selectNewValue(e.x, e.y);
+      this.menu.visible = false;
+      this.unhighlightElements();
     };
-
-    //rectangle.on("pointerup", () => this.toggleMenu());
-
-    //this.eventMode = "static";
 
     this.showSelectedOptionText();
   };
@@ -113,9 +121,12 @@ export class SelectOneBox extends PIXI.Container {
 
     this.menuBackgroundOptions.forEach((menuBackgroundOption, index) => {
       menuBackgroundOption.background.beginFill(0xffc800);
+
+      const optionX = this.selectOneBoxX;
+      const optionY = this.selectOneBoxY - this.selectOneBoxHeight * (index + 1);
       menuBackgroundOption.background.drawRect(
-        this.selectOneBoxX,
-        this.selectOneBoxY - this.selectOneBoxHeight * (index + 1),
+        optionX,
+        optionY,
         this.selectOneBoxWidth,
         this.selectOneBoxHeight
       );
@@ -128,14 +139,19 @@ export class SelectOneBox extends PIXI.Container {
         this.selectOneBoxY +
         this.selectOneBoxHeight / 2 -
         this.selectOneBoxHeight * (index + 1);
+
+      menuBackgroundOption.left = optionX;
+      menuBackgroundOption.right = optionX + this.selectOneBoxWidth;
+      menuBackgroundOption.top = optionY;
+      menuBackgroundOption.bottom = optionY + this.selectOneBoxHeight;
     });
   };
 
   private showSelectedOptionText = () => {
-    this.selectedText.text = this.selectedValue.description;
+    this.selectedText.text = (this.labelText ? this.labelText + ": " + this.selectedValue.description : this.selectedValue.description);
     this.selectedText.style = {
       fontFamily: "Verdana",
-      fontSize: 15,
+      fontSize: 12,
       fill: ["#000000"],
     };
   };
@@ -146,20 +162,25 @@ export class SelectOneBox extends PIXI.Container {
         option: option,
         background: new PIXI.Graphics(),
         text: new PIXI.Text(),
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
       };
 
+      menuBackgroundOption.text.anchor.y = 0.5;
       menuBackgroundOption.text.text = option.description;
       menuBackgroundOption.text.style = {
         fontFamily: "Verdana",
-        fontSize: 15,
+        fontSize: 12,
         fill: ["#000000"],
       };
 
-      menuBackgroundOption.background.eventMode = "static";
+      /*menuBackgroundOption.background.eventMode = "static";
       menuBackgroundOption.background.onpointerover = () =>
         (this.background.alpha = 0.5);
       menuBackgroundOption.background.onpointerout = () =>
-        (this.background.alpha = 1);
+        (this.background.alpha = 1);*/
 
       this.menuBackgroundOptions.push(menuBackgroundOption);
 
@@ -168,14 +189,28 @@ export class SelectOneBox extends PIXI.Container {
     });
   };
 
-  private pointerOutsideMenuZone: (mouseX: number, mouseY: number) => boolean =
-    (mouseX, mouseY) => {
-      const top =
+  private getSelectOneBoxBounds = () => {
+    const top =
         this.selectOneBoxY -
         this.menuBackgroundOptions.length * this.selectOneBoxHeight;
-      const bottom = this.selectOneBoxY + this.selectOneBoxHeight;
-      const left = this.selectOneBoxX;
-      const right = this.selectOneBoxX + this.selectOneBoxWidth;
+    const bottom = this.selectOneBoxY + this.selectOneBoxHeight;
+    const left = this.selectOneBoxX;
+    const right = this.selectOneBoxX + this.selectOneBoxWidth;
+
+    return {top, bottom, left, right};
+
+  };
+
+  private pointerInsideMenuZone: (mouseX: number, mouseY: number) => boolean =
+    (mouseX, mouseY) => {
+
+    const bounds = this.getSelectOneBoxBounds();
+
+      const top =
+        bounds.top;
+      const bottom = bounds.bottom;
+      const left = bounds.left;
+      const right = bounds.right;
 
       //console.log("top:", top, "bottom:", bottom, "left:", left, "right:", right);
       //console.log("mouseX:", mouseX, "mouseY:", mouseY);
@@ -184,6 +219,42 @@ export class SelectOneBox extends PIXI.Container {
         mouseX > left && mouseX < right && mouseY < bottom && mouseY > top
       );
     };
+
+  private highlightElements = (mouseY: number) => {
+    const bounds = this.getSelectOneBoxBounds();
+
+    //console.log("bounds:", bounds, "mouseY:",mouseY);
+
+    if(mouseY < bounds.bottom && mouseY > this.selectOneBoxY) {
+      this.background.alpha = 0.6;
+    }
+
+    this.menuBackgroundOptions.forEach(menuBackgroundOption => {
+      //menuBackgroundOption.background.alpha = 0.6;
+      menuBackgroundOption.background.alpha = (mouseY < menuBackgroundOption.bottom && mouseY >  menuBackgroundOption.top) ? 0.6 : 1;
+    });
+  };
+
+  private unhighlightElements = () => {
+    this.background.alpha = 1;
+    this.menuBackgroundOptions.forEach(menuBackgroundOption => {
+      menuBackgroundOption.background.alpha = 1;
+    });
+
+  };
+
+  private selectNewValue = (mouseX: number, mouseY: number) => {
+    const pointerInsideMenuZone = this.pointerInsideMenuZone(mouseX, mouseY);
+
+    if(pointerInsideMenuZone) {
+      this.menuBackgroundOptions.forEach(menuBackgroundOption => {
+        if(mouseY < menuBackgroundOption.bottom && mouseY >  menuBackgroundOption.top) {
+          this.selectedValue = menuBackgroundOption.option;
+          this.showSelectedOptionText();
+        }
+      });
+    }
+  };
 
   resize = () => {
     this.background.clear();
