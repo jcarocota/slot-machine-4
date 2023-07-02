@@ -4,6 +4,9 @@ import { Button } from "./Button.ts";
 import { FrameRateInfo } from "./FrameRateInfo.ts";
 import { ReelsWindow } from "./ReelsWindow.ts";
 import { Option, SelectOneBox } from "./SelectOneBox.ts";
+import { GameSocketClient } from "../ws/GameSocketClient.ts";
+import { SpinResponse } from "../ws/InterfaceResponse.ts";
+import { ButtonState } from "./ButtonState.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -53,13 +56,35 @@ export class SlotMachine extends PIXI.Container {
   private createPlayButton = () => {
     const { buttonWidth, buttonHeight, buttonX, buttonY } =
       this.calculateBoundsPlayButton();
-    this.playButton = new Button(
-      buttonWidth,
-      buttonHeight,
-      buttonX,
-      buttonY,
-      "Play"
-    );
+
+    this.playButton = new Button(buttonWidth, buttonHeight, buttonX, buttonY);
+
+    this.playButton.setButtonUIReady(0x2ecc71, "Ready to play!");
+    this.playButton.setButtonUIDisabled(0x566573, "Spinning...");
+    this.playButton.setButtonUIPointerOver(0xf4d03f, "Click now!");
+
+    this.playButton.buttonState = ButtonState.ready;
+
+    this.playButton.pointerOver = () => {
+      this.playButton.buttonState = ButtonState.pointerover;
+    };
+
+    this.playButton.pointerOut = () => {
+      this.playButton.buttonState = ButtonState.ready;
+    };
+
+    this.playButton.clickEvent = () => {
+      this.playButton.buttonState = ButtonState.disabled;
+      const socket = GameSocketClient.instance;
+      const afterSpinEvent = (data: any) => {
+        const spinResponse: SpinResponse = data;
+
+        globalSettings.moneyBalance = spinResponse.moneyBalance;
+        this.playButton.buttonState = ButtonState.ready;
+      };
+
+      socket.spin(globalSettings.stake, afterSpinEvent);
+    };
   };
 
   private createFrameRateInfo = () => {
@@ -96,6 +121,12 @@ export class SlotMachine extends PIXI.Container {
     options.push({ value: 75, description: "75.00 USD" });
     options.push({ value: 100, description: "100.00 USD" });
 
+    const setStakeInfo = (newStake: number) => {
+      //console.log("globalSettings.stake=", globalSettings.stake)
+      globalSettings.stake = newStake;
+      //console.log("(new value) globalSettings.stake=", globalSettings.stake)
+    };
+
     this.stakeSelectOneBox = new SelectOneBox(
       stakeSelectOneBoxWidth,
       stakeSelectOneBoxHeight,
@@ -103,7 +134,8 @@ export class SlotMachine extends PIXI.Container {
       stakeSelectOneBoxY,
       options,
       options[0],
-        "Stake"
+      "Stake",
+      setStakeInfo
     );
   };
 

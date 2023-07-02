@@ -1,22 +1,49 @@
 import * as PIXI from "pixi.js";
+import { ButtonState } from "./ButtonState.ts";
+
+export type stateUI = {
+  backgroundColor: number;
+  textLabel: string;
+  state: ButtonState;
+};
 
 export class Button extends PIXI.Container {
   private background = new PIXI.Graphics();
 
   private text = new PIXI.Text();
 
+  private _clickEvent: () => void;
+  private _pointerOver: () => void;
+  private _pointerOut: () => void;
+
+  private defaultUI: stateUI = {
+    backgroundColor: 0x2ecc71,
+    textLabel: "",
+    state: ButtonState.ready,
+  };
+
+  private buttonUI: stateUI = this.defaultUI;
+
+  private _buttonUIReady: stateUI | undefined;
+  private _buttonUIDisabled: stateUI | undefined;
+  private _buttonUIPointerOver: stateUI | undefined;
+
+  private _buttonState: ButtonState = ButtonState.ready;
+
   buttonWidth: number;
   buttonHeight: number;
   buttonX: number;
   buttonY: number;
-  textLabel: string;
 
   constructor(
     width: number,
     height: number,
     x: number,
     y: number,
-    textLabel: string
+    textLabel: string = "click",
+    clickEvent: () => void = () => {},
+    overEvent: () => void = () => {},
+    outEvent: () => void = () => {}
   ) {
     super();
 
@@ -24,7 +51,10 @@ export class Button extends PIXI.Container {
     this.buttonHeight = height;
     this.buttonX = x;
     this.buttonY = y;
-    this.textLabel = textLabel;
+    this.buttonUI.textLabel = textLabel;
+    this._clickEvent = clickEvent;
+    this._pointerOver = overEvent;
+    this._pointerOut = outEvent;
 
     this.init();
   }
@@ -34,10 +64,12 @@ export class Button extends PIXI.Container {
 
     this.addChild(this.background);
     this.addChild(this.text);
+
+    this.eventMode = "static";
   };
 
   private draw = () => {
-    this.background.beginFill(0x2ecc71);
+    this.background.beginFill(this.buttonUI.backgroundColor);
     this.background.drawRect(
       this.buttonX,
       this.buttonY,
@@ -54,7 +86,74 @@ export class Button extends PIXI.Container {
       fontSize: 20,
       fill: ["#000000"],
     };
-    this.text.text = this.textLabel;
+    this.text.text = this.buttonUI.textLabel;
+  };
+
+  private applyUISettings = () => {
+    let buttonUI: stateUI = this.defaultUI;
+
+    switch (this._buttonState) {
+      case ButtonState.ready:
+        buttonUI = this._buttonUIReady ? this._buttonUIReady : buttonUI;
+        this.eventMode = "static";
+        break;
+      case ButtonState.pointerover:
+        buttonUI = this._buttonUIPointerOver
+          ? this._buttonUIPointerOver
+          : buttonUI;
+        break;
+      case ButtonState.disabled:
+        buttonUI = this._buttonUIDisabled ? this._buttonUIDisabled : buttonUI;
+        this.eventMode = "none";
+        break;
+    }
+
+    this.buttonUI = buttonUI;
+    this.resize();
+  };
+
+  set buttonState(value: ButtonState) {
+    this._buttonState = value;
+    this.applyUISettings();
+  }
+
+  set clickEvent(value: () => void) {
+    this._clickEvent = value;
+    this.onpointerup = this._clickEvent;
+  }
+
+  set pointerOver(value: () => void) {
+    this._pointerOver = value;
+    this.onpointerover = this._pointerOver;
+  }
+
+  set pointerOut(value: () => void) {
+    this._pointerOut = value;
+    this.onpointerout = this._pointerOut;
+  }
+
+  setButtonUIReady = (buttonColor: number, buttonTextLabel: string) => {
+    this._buttonUIReady = {
+      state: ButtonState.ready,
+      backgroundColor: buttonColor,
+      textLabel: buttonTextLabel,
+    };
+  };
+
+  setButtonUIDisabled = (buttonColor: number, buttonTextLabel: string) => {
+    this._buttonUIDisabled = {
+      state: ButtonState.disabled,
+      backgroundColor: buttonColor,
+      textLabel: buttonTextLabel,
+    };
+  };
+
+  setButtonUIPointerOver = (buttonColor: number, buttonTextLabel: string) => {
+    this._buttonUIPointerOver = {
+      state: ButtonState.pointerover,
+      backgroundColor: buttonColor,
+      textLabel: buttonTextLabel,
+    };
   };
 
   resize = () => {

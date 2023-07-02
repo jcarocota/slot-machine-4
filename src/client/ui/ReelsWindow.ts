@@ -53,6 +53,8 @@ export class ReelsWindow extends PIXI.Container {
     });
   };
 
+  fireSlotMachinePlay = () => {};
+
   private draw = () => {
     this.background.beginFill(0xffffff);
     this.background.drawRect(

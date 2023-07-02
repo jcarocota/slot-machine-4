@@ -21,3 +21,24 @@ export interface MoneyBalanceResponse {
   idRequest: number;
   moneyBalance: number;
 }
+
+export interface Payline {
+  id: number;
+  payline: boolean[][];
+  description: string;
+}
+
+export interface PaylineInfo {
+  payline: Payline;
+  numberOfCoincidences: number;
+  numberOfBigWins: number;
+  amountWinByLine: number;
+}
+
+export interface SpinResponse {
+  idRequest: number;
+  symbolsArray: number[][];
+  gottenPaylinesInfo: PaylineInfo[];
+  moneyBalance: number;
+  amountTotalWin: number;
+}

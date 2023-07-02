@@ -38,6 +38,8 @@ export class App extends PIXI.Application {
   };
 
   private loadGameData = () => {
+    globalSettings.stake = 1;
+
     const setStrips = (data: any) => {
       const stripsResponse: StripsResponse = data;
       globalSettings.strips = stripsResponse.strips;

@@ -13,6 +13,7 @@ interface GlobalSettings {
   slotTextureSheet?: PIXI.Spritesheet;
   slotBlurredTextureSheet?: PIXI.Spritesheet;
   slotSemiBlurredTextureSheet?: PIXI.Spritesheet;
+  stake: number;
   symbols: SymbolSlot[];
   strips: Strip[];
   questionMarkTexture: PIXI.Texture;
@@ -26,6 +27,7 @@ export const globalSettings: GlobalSettings = {
   slotMachineHeight: 0,
   slotMachinePosX: 0,
   slotMachinePosY: 0,
+  stake: 0,
   symbols: [],
   strips: [],
   questionMarkTexture: PIXI.Texture.from(gameConfig.questionMarkAsset),
