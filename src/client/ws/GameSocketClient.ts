@@ -50,7 +50,7 @@ export class GameSocketClient extends WebSocket {
           );
         }
       } catch (e) {
-        console.log("Unable to convert to JSON. Data received:", event.data);
+        console.log("Unable to convert to JSON. Data received:", event.data, e);
         //console.error(e);
       }
     });
@@ -129,6 +129,21 @@ export class GameSocketClient extends WebSocket {
     }
 
     return data;
+  };
+
+  initPositions = (event: ((data: any) => void) | undefined) => {
+    const idRequest = this.genetareIdRequest();
+    const query: RequestValues = {
+      idRequest: idRequest,
+      action: "init",
+      user: "guest",
+      stake: 1,
+    };
+    this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.init, event);
+
+    return idRequest;
   };
 
   balance = (event: ((data: any) => void) | undefined) => {

@@ -122,6 +122,15 @@ export class SlotMachine {
     return amountTotalWin;
   };
 
+  initSymbols = (idRequest: number) => {
+    const symbolsArray = this.generateSymbolsArray();
+
+    return {
+      idRequest: idRequest,
+      symbolsArray: symbolsArray,
+    };
+  };
+
   spin = (stake: number, idRequest: number) => {
     const symbolsArray = this.generateSymbolsArray();
     const gottenPaylinesInfo = this.calculatePaylines(symbolsArray, stake);

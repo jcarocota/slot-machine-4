@@ -5,6 +5,7 @@ export enum RequestStatus {
 }
 
 export enum RequestType {
+  init,
   balance,
   spin,
   strips,

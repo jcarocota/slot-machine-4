@@ -42,7 +42,17 @@ export class App extends PIXI.Application {
 
     const setStrips = (data: any) => {
       const stripsResponse: StripsResponse = data;
-      globalSettings.strips = stripsResponse.strips;
+      const stripsWSData = stripsResponse.strips;
+
+      stripsWSData.forEach((stripWSData) => {
+        const strip: number[] = [];
+        for (const [, symbolSlot] of stripWSData.entries()) {
+          strip.push(symbolSlot.id);
+        }
+        globalSettings.strips.push(strip);
+        globalSettings.stripsWithActualOffset.push([...strip]);
+      });
+
       console.log("globalSettings.strips=", globalSettings.strips);
     };
 

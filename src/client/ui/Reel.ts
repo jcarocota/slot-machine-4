@@ -1,12 +1,11 @@
 import * as PIXI from "pixi.js";
 import { Slot } from "./Slot.ts";
 import { gameConfig } from "../config/GameConfig.ts";
-import { Strip } from "../ws/InterfaceResponse.ts";
 
 export class Reel extends PIXI.Container {
   private slots: Slot[] = [];
 
-  private strip: Strip;
+  private strip: number[];
 
   private background = new PIXI.Graphics();
 
@@ -20,7 +19,7 @@ export class Reel extends PIXI.Container {
     height: number,
     x: number,
     y: number,
-    strip: Strip
+    strip: number[]
   ) {
     super();
 
@@ -44,14 +43,14 @@ export class Reel extends PIXI.Container {
   };
 
   private generateSlots = () => {
-    for (const [, symbolSlot] of this.strip.entries()) {
+    this.strip.forEach((idSymbol) => {
       const slot: Slot = new Slot(
-        `${symbolSlot.id}`,
+        `${idSymbol}`,
         this.reelWidth,
         this.reelHeight / 3
       );
       this.slots.push(slot);
-    }
+    });
   };
 
   private draw = () => {

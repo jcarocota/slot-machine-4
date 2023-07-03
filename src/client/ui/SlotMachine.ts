@@ -5,8 +5,8 @@ import { FrameRateInfo } from "./FrameRateInfo.ts";
 import { ReelsWindow } from "./ReelsWindow.ts";
 import { Option, SelectOneBox } from "./SelectOneBox.ts";
 import { GameSocketClient } from "../ws/GameSocketClient.ts";
-import { SpinResponse } from "../ws/InterfaceResponse.ts";
 import { ButtonState } from "./ButtonState.ts";
+import { SpinResponse } from "../ws/InterfaceResponse.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -84,6 +84,8 @@ export class SlotMachine extends PIXI.Container {
       };
 
       socket.spin(globalSettings.stake, afterSpinEvent);
+
+      this.reelsWindow.fireSlotMachinePlay();
     };
   };
 

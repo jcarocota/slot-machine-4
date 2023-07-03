@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Strip, SymbolSlot } from "./ws/InterfaceResponse.ts";
+import { SymbolSlot } from "./ws/InterfaceResponse.ts";
 import { gameConfig } from "./config/GameConfig.ts";
 
 interface GlobalSettings {
@@ -15,7 +15,8 @@ interface GlobalSettings {
   slotSemiBlurredTextureSheet?: PIXI.Spritesheet;
   stake: number;
   symbols: SymbolSlot[];
-  strips: Strip[];
+  strips: number[][];
+  stripsWithActualOffset: number[][];
   questionMarkTexture: PIXI.Texture;
 }
 
@@ -30,5 +31,6 @@ export const globalSettings: GlobalSettings = {
   stake: 0,
   symbols: [],
   strips: [],
+  stripsWithActualOffset: [],
   questionMarkTexture: PIXI.Texture.from(gameConfig.questionMarkAsset),
 };

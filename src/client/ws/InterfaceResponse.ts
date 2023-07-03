@@ -17,6 +17,11 @@ export interface StripsResponse {
   strips: Strip[];
 }
 
+export interface InitPositionsResponse {
+  idRequest: number;
+  symbolsArray: number[][];
+}
+
 export interface MoneyBalanceResponse {
   idRequest: number;
   moneyBalance: number;

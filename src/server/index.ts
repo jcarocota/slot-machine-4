@@ -43,6 +43,10 @@ wss.on("connection", (ws: WebSocket) => {
 
       let result;
       switch (action) {
+        case "init":
+          result = slotMachine.initSymbols(idRequest);
+          ws.send(JSON.stringify(result));
+          break;
         case "spin":
           const stake: number = jsonMessage["stake"];
           result = slotMachine.spin(stake, idRequest);
