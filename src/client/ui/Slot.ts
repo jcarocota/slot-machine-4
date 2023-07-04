@@ -6,6 +6,8 @@ export class Slot extends PIXI.Sprite {
   private readonly textureBlurred: PIXI.Texture;
   private readonly textureIdle: PIXI.Texture;
 
+  idTexture: number;
+
   moveVertical = (step: number) => {
     this.y += step;
   };
@@ -64,10 +66,11 @@ export class Slot extends PIXI.Sprite {
     return textures;
   };
 
-  constructor(idTexture: string, slotWidth: number, slotHeight: number) {
+  constructor(idTexture: number, slotWidth: number, slotHeight: number) {
     super();
 
-    const textures: PIXI.Texture[] = this.getSlotTexture(idTexture);
+    this.idTexture = idTexture;
+    const textures: PIXI.Texture[] = this.getSlotTexture(`${idTexture}`);
     this.textureIdle = textures[0];
     this.textureBlurred = textures[1];
     this.textureSemiBlurred = textures[2];

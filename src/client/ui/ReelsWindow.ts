@@ -79,11 +79,11 @@ export class ReelsWindow extends PIXI.Container {
         globalSettings.stripsWithActualOffset.push(stripWithOffset);
       });
 
-      console.log("symbolsArray=", symbolsArray);
-      console.log(
+      //console.log("symbolsArray=", symbolsArray);
+      /*console.log(
         "globalSettings.stripsWithActualOffset=",
         globalSettings.stripsWithActualOffset
-      );
+      );*/
 
       this.strips = globalSettings.stripsWithActualOffset;
 
@@ -123,7 +123,7 @@ export class ReelsWindow extends PIXI.Container {
     });
   };
 
-  fireSlotMachinePlay = () => {
+  fireSlotMachinePlay = (symbolsArray:number[][]) => {
     /*const positionIni = {x:0, y:0, rotation: 0};
     const positionEnd = {x:0, y:100, rotation: 0};
 
@@ -154,8 +154,6 @@ export class ReelsWindow extends PIXI.Container {
 
     console.log("Tween started");*/
 
-    const a: number[][] = [];
-
     const durationWholeAnimation = 5000;
     const delayInMillis = 100;
     const minDurationReelAnimation = 1000;
@@ -168,8 +166,24 @@ export class ReelsWindow extends PIXI.Container {
         : reelAnimationDuration;
 
     this.reels.forEach((reel, i) => {
-      reel.animateReel(a, reelAnimationDuration, i * delayInMillis);
+      const symbolsAfterSpin: number[] = [];
+
+      symbolsArray.forEach(row =>{
+        symbolsAfterSpin.push(row[i]);
+      });
+
+      reel.animateReel(symbolsAfterSpin, reelAnimationDuration, i * delayInMillis);
+      //console.log("Slot=", i, "delayInMillis=",i*delayInMillis);
     });
+
+    /*const symbolsAfterSpin: number[] = [];
+    symbolsArray.forEach(row =>{
+      symbolsAfterSpin.push(row[0]);
+    });
+    this.reels[0].animateReel(symbolsAfterSpin, reelAnimationDuration, 0 * delayInMillis);*/
+
+
+
   };
 
   private draw = () => {

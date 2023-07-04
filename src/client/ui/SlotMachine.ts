@@ -36,10 +36,10 @@ export class SlotMachine extends PIXI.Container {
     this.draw();
 
     this.addChild(this.background);
-    this.addChild(this.playButton);
     this.addChild(this.frameRateInfo);
     this.addChild(this.reelsWindow);
     this.addChild(this.stakeSelectOneBox);
+    this.addChild(this.playButton);
   };
 
   private draw = () => {
@@ -79,13 +79,16 @@ export class SlotMachine extends PIXI.Container {
       const afterSpinEvent = (data: any) => {
         const spinResponse: SpinResponse = data;
 
+        console.log("Symbols after spín=",spinResponse.symbolsArray);
+        this.reelsWindow.fireSlotMachinePlay(spinResponse.symbolsArray);
+
         globalSettings.moneyBalance = spinResponse.moneyBalance;
         this.playButton.buttonState = ButtonState.ready;
       };
 
       socket.spin(globalSettings.stake, afterSpinEvent);
 
-      this.reelsWindow.fireSlotMachinePlay();
+
     };
   };
 
