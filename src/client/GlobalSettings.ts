@@ -4,6 +4,7 @@ import { gameConfig } from "./config/GameConfig.ts";
 
 interface GlobalSettings {
   moneyBalance: number | undefined;
+  numberOfReelsSpinning: number;
   windowWidth: number;
   windowHeight: number;
   slotMachineWidth: number;
@@ -23,6 +24,7 @@ interface GlobalSettings {
 
 export const globalSettings: GlobalSettings = {
   moneyBalance: undefined,
+  numberOfReelsSpinning: 0,
   windowWidth: 0,
   windowHeight: 0,
   slotMachineWidth: 0,

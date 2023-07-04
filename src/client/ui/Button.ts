@@ -95,22 +95,27 @@ export class Button extends PIXI.Container {
     switch (this._buttonState) {
       case ButtonState.ready:
         buttonUI = this._buttonUIReady ? this._buttonUIReady : buttonUI;
-        this.eventMode = "static";
+        //this.eventMode = "static";
         break;
       case ButtonState.pointerover:
         buttonUI = this._buttonUIPointerOver
           ? this._buttonUIPointerOver
           : buttonUI;
+        console.log("Mouse over button");
         break;
       case ButtonState.disabled:
         buttonUI = this._buttonUIDisabled ? this._buttonUIDisabled : buttonUI;
-        this.eventMode = "none";
+        //this.eventMode = "auto";
         break;
     }
 
     this.buttonUI = buttonUI;
     this.resize();
   };
+
+  get buttonState() {
+    return this._buttonState;
+  }
 
   set buttonState(value: ButtonState) {
     this._buttonState = value;

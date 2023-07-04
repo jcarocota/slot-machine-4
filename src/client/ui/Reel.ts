@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Slot } from "./Slot.ts";
 import { gameConfig } from "../config/GameConfig.ts";
+import {globalSettings} from "../GlobalSettings.ts";
 
 export class Reel extends PIXI.Container {
   private slots: Slot[] = [];
@@ -232,6 +233,8 @@ export class Reel extends PIXI.Container {
         this.setSlotPositions();
         slot.showIdleTexture();
       });
+
+      globalSettings.numberOfReelsSpinning--;
 /*
       if(this.slots[0].y >  this.reelY - (this.reelHeight / 16)*2) {
         const lastSlot = this.slots[this.slots.length-1];

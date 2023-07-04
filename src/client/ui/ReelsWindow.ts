@@ -180,6 +180,7 @@ export class ReelsWindow extends PIXI.Container {
       });
 
       reel.animateReel(symbolsAfterSpin, reelAnimationDuration, i * delayInMillis);
+      globalSettings.numberOfReelsSpinning++;
       //console.log("Slot=", i, "delayInMillis=",i*delayInMillis);
     });
 

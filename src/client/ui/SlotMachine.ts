@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
-import { globalSettings } from "../GlobalSettings.ts";
-import { Button } from "./Button.ts";
-import { FrameRateInfo } from "./FrameRateInfo.ts";
-import { ReelsWindow } from "./ReelsWindow.ts";
-import { Option, SelectOneBox } from "./SelectOneBox.ts";
-import { GameSocketClient } from "../ws/GameSocketClient.ts";
-import { ButtonState } from "./ButtonState.ts";
-import { SpinResponse } from "../ws/InterfaceResponse.ts";
+import {globalSettings} from "../GlobalSettings.ts";
+import {Button} from "./Button.ts";
+import {FrameRateInfo} from "./FrameRateInfo.ts";
+import {ReelsWindow} from "./ReelsWindow.ts";
+import {Option, SelectOneBox} from "./SelectOneBox.ts";
+import {GameSocketClient} from "../ws/GameSocketClient.ts";
+import {ButtonState} from "./ButtonState.ts";
+import {SpinResponse} from "../ws/InterfaceResponse.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -21,6 +21,8 @@ export class SlotMachine extends PIXI.Container {
 
   // @ts-ignore
   private stakeSelectOneBox: SelectOneBox;
+
+  private mustShowResults = false;
 
   constructor() {
     super();
@@ -66,30 +68,56 @@ export class SlotMachine extends PIXI.Container {
     this.playButton.buttonState = ButtonState.ready;
 
     this.playButton.pointerOver = () => {
-      this.playButton.buttonState = ButtonState.pointerover;
+      console.log("Mouse over button", "this.eventMode=", this.eventMode);
+      if(this.playButton.buttonState != ButtonState.disabled) {
+        this.playButton.buttonState = ButtonState.pointerover;
+      }
     };
 
     this.playButton.pointerOut = () => {
-      this.playButton.buttonState = ButtonState.ready;
+      console.log("Mouse out button", "this.eventMode=",this.eventMode);
+      if(this.playButton.buttonState != ButtonState.disabled) {
+        this.playButton.buttonState = ButtonState.ready;
+      }
     };
 
     this.playButton.clickEvent = () => {
+      if(this.playButton.buttonState == ButtonState.disabled) {
+        return;
+      }
+
+      this.mustShowResults = true;
+
       this.playButton.buttonState = ButtonState.disabled;
       const socket = GameSocketClient.instance;
       const afterSpinEvent = (data: any) => {
         const spinResponse: SpinResponse = data;
 
         console.log("Symbols after spín=",spinResponse.symbolsArray);
+
         this.reelsWindow.fireSlotMachinePlay(spinResponse.symbolsArray);
 
         globalSettings.moneyBalance = spinResponse.moneyBalance;
-        this.playButton.buttonState = ButtonState.ready;
       };
 
       socket.spin(globalSettings.stake, afterSpinEvent);
 
+      PIXI.Ticker.shared.add(this.slotMachineIsStopped);
 
     };
+  };
+
+  private slotMachineIsStopped = () => {
+    console.log("Waiting... globalSettings.numberOfReelsSpinning=",globalSettings.numberOfReelsSpinning, "this.mustShowResults=",this.mustShowResults)
+    if(!globalSettings.numberOfReelsSpinning && this.mustShowResults) {
+      this.mustShowResults = false;
+
+      PIXI.Ticker.shared.remove(this.slotMachineIsStopped);
+
+      this.playButton.buttonState = ButtonState.ready;
+      console.log("Spin is finished!!! Let's show some results");
+    }
+
   };
 
   private createFrameRateInfo = () => {
