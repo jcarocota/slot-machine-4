@@ -66,11 +66,12 @@ export class ReelsWindow extends PIXI.Container {
           }
         }
 
-        const symbolsNeededToCompleteStrip = numberOfSlotsByStrip - stripWithOffset.length;
+        const symbolsNeededToCompleteStrip =
+          numberOfSlotsByStrip - stripWithOffset.length;
 
         let nextId = thirdId + 1;
-        for(let j = 0; j < symbolsNeededToCompleteStrip; j++) {
-          nextId = (nextId > (numberOfSlotsByStrip - 1) ? 0 : nextId)
+        for (let j = 0; j < symbolsNeededToCompleteStrip; j++) {
+          nextId = nextId > numberOfSlotsByStrip - 1 ? 0 : nextId;
           stripWithOffset.push(strip[nextId]);
           nextId++;
         }
@@ -78,8 +79,11 @@ export class ReelsWindow extends PIXI.Container {
         globalSettings.stripsWithActualOffset.push(stripWithOffset);
       });
 
-      console.log("symbolsArray=",symbolsArray);
-      console.log("globalSettings.stripsWithActualOffset=",globalSettings.stripsWithActualOffset);
+      console.log("symbolsArray=", symbolsArray);
+      console.log(
+        "globalSettings.stripsWithActualOffset=",
+        globalSettings.stripsWithActualOffset
+      );
 
       this.strips = globalSettings.stripsWithActualOffset;
 
@@ -149,6 +153,23 @@ export class ReelsWindow extends PIXI.Container {
     requestAnimationFrame(animate);
 
     console.log("Tween started");*/
+
+    const a: number[][] = [];
+
+    const durationWholeAnimation = 5000;
+    const delayInMillis = 100;
+    const minDurationReelAnimation = 1000;
+    let reelAnimationDuration =
+      durationWholeAnimation - delayInMillis * (this.reels.length - 1);
+
+    reelAnimationDuration =
+      reelAnimationDuration <= 0
+        ? minDurationReelAnimation
+        : reelAnimationDuration;
+
+    this.reels.forEach((reel, i) => {
+      reel.animateReel(a, reelAnimationDuration, i * delayInMillis);
+    });
   };
 
   private draw = () => {
