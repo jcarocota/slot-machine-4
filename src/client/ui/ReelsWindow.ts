@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js";
 //import * as TWEEN from "@tweenjs/tween.js";
-import { Reel } from "./Reel.ts";
-import { InitPositionsResponse } from "../ws/InterfaceResponse.ts";
-import { globalSettings } from "../GlobalSettings.ts";
-import { GameSocketClient } from "../ws/GameSocketClient.ts";
+import {Reel} from "./Reel.ts";
+import {InitPositionsResponse} from "../ws/InterfaceResponse.ts";
+import {globalSettings} from "../GlobalSettings.ts";
+import {GameSocketClient} from "../ws/GameSocketClient.ts";
 
 export class ReelsWindow extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -13,6 +13,8 @@ export class ReelsWindow extends PIXI.Container {
   private reels: Reel[] = [];
 
   private gameSocketClient: GameSocketClient = GameSocketClient.instance;
+
+  private symbolsInit: number[][] = [];
 
   reelsWindowWidth: number;
   reelsWindowHeight: number;
@@ -27,7 +29,7 @@ export class ReelsWindow extends PIXI.Container {
     this.reelsWindowX = x;
     this.reelsWindowY = y;
 
-    this.strips = globalSettings.stripsWithActualOffset;
+    this.strips = globalSettings.strips;
 
     //this.init();
 
@@ -37,9 +39,7 @@ export class ReelsWindow extends PIXI.Container {
   private loadInitPositions = () => {
     const setInitPositions = (data: any) => {
       const initPositionsResponse: InitPositionsResponse = data;
-      const symbolsArray = initPositionsResponse.symbolsArray;
-
-      globalSettings.stripsWithActualOffset = [];
+      /*globalSettings.stripsWithActualOffset = [];
 
       globalSettings.strips.forEach((strip, i) => {
         const stripWithOffset: number[] = [];
@@ -77,7 +77,7 @@ export class ReelsWindow extends PIXI.Container {
         }
 
         globalSettings.stripsWithActualOffset.push(stripWithOffset);
-      });
+      });*/
 
       //console.log("symbolsArray=", symbolsArray);
       /*console.log(
@@ -85,7 +85,9 @@ export class ReelsWindow extends PIXI.Container {
         globalSettings.stripsWithActualOffset
       );*/
 
-      this.strips = globalSettings.stripsWithActualOffset;
+      //this.strips = globalSettings.stripsWithActualOffset;
+
+      this.symbolsInit = initPositionsResponse.symbolsArray;
 
       this.init();
     };
@@ -111,13 +113,18 @@ export class ReelsWindow extends PIXI.Container {
   };
 
   private generateReels = () => {
+    console.log("Generating reels");
     this.strips.forEach((strip, i) => {
+      const columnSymbolsInit = [this.symbolsInit[0][i], this.symbolsInit[1][i], this.symbolsInit[2][i]];
+
+      console.log("number of reel=",i,"columnSymbolsInit=",columnSymbolsInit);
       const reel: Reel = new Reel(
         this.reelsWindowWidth / 5,
-        (this.reelsWindowHeight / 3) * 16,
+          this.reelsWindowHeight, //(this.reelsWindowHeight / 3) * 16,
         this.reelsWindowX + (this.reelsWindowWidth / 5) * i,
         this.reelsWindowY,
-        strip
+        strip,
+          columnSymbolsInit
       );
       this.reels.push(reel);
     });
@@ -198,7 +205,7 @@ export class ReelsWindow extends PIXI.Container {
 
     this.reels.forEach((reel, i) => {
       reel.reelWidth = this.reelsWindowWidth / 5;
-      reel.reelHeight = (this.reelsWindowHeight / 3) * 16;
+      reel.reelHeight = this.reelsWindowHeight;
       reel.reelX = this.reelsWindowX + (this.reelsWindowWidth / 5) * i;
       reel.reelY = this.reelsWindowY;
     });

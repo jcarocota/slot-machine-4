@@ -13,6 +13,7 @@ interface GlobalSettings {
   slotTextureSheet?: PIXI.Spritesheet;
   slotBlurredTextureSheet?: PIXI.Spritesheet;
   slotSemiBlurredTextureSheet?: PIXI.Spritesheet;
+  slotDebugModeTextureSheet?: PIXI.Spritesheet;
   stake: number;
   symbols: SymbolSlot[];
   strips: number[][];

@@ -111,6 +111,7 @@ export class App extends PIXI.Application {
     urlSpriteSheets.push(gameConfig.slotMachineSheet);
     urlSpriteSheets.push(gameConfig.slotMachineBlurredSheet);
     urlSpriteSheets.push(gameConfig.slotMachineSemiBlurredSheet);
+    urlSpriteSheets.push(gameConfig.slotMachineDebugModeSheet);
 
     PIXI.Assets.load(urlSpriteSheets).then(
       (sheets: Record<string, PIXI.Spritesheet>) => {
@@ -119,7 +120,10 @@ export class App extends PIXI.Application {
           sheets[gameConfig.slotMachineBlurredSheet];
         globalSettings.slotSemiBlurredTextureSheet =
           sheets[gameConfig.slotMachineSemiBlurredSheet];
-        console.log(
+        globalSettings.slotDebugModeTextureSheet =
+          sheets[gameConfig.slotMachineDebugModeSheet];
+
+        /*console.log(
           "globalSettings.slotTextureSheet=",
           globalSettings.slotTextureSheet
         );
@@ -130,7 +134,7 @@ export class App extends PIXI.Application {
         console.log(
           "globalSettings.slotSemiBlurredTextureSheet=",
           globalSettings.slotSemiBlurredTextureSheet
-        );
+        );*/
 
         this.calculateWindowSize();
         this.calculateSlotMachineDimentions();

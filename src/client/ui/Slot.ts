@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { globalSettings } from "../GlobalSettings.ts";
+import {gameConfig} from "../config/GameConfig.ts";
 
 export class Slot extends PIXI.Sprite {
   private readonly textureSemiBlurred: PIXI.Texture;
@@ -45,6 +46,9 @@ export class Slot extends PIXI.Sprite {
     textureIdle = textureIdle
       ? textureIdle
       : globalSettings.questionMarkTexture;
+
+    let textureDebugMode = globalSettings.slotDebugModeTextureSheet?.textures[idTexture];
+    textureIdle = (gameConfig.debugMode == 1 ? (textureDebugMode ? textureDebugMode : textureIdle): textureIdle);
 
     let textureBlurred =
       globalSettings.slotBlurredTextureSheet?.textures[idTexture];

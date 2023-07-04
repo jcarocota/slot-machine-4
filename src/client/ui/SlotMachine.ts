@@ -98,6 +98,7 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private createReelsWindow = () => {
+    console.log("Creating reels window");
     const { reelsWindowWidth, reelsWindowHeight, reelsWindowX, reelsWindowY } =
       this.calculateBoundsReelsWindow();
     this.reelsWindow = new ReelsWindow(
