@@ -64,6 +64,10 @@ wss.on("connection", (ws: WebSocket) => {
           result = slotMachine.getMoneyBalance(idRequest);
           ws.send(JSON.stringify(result));
           break;
+        case "paylines":
+          result = slotMachine.getPaylines(idRequest);
+          ws.send(JSON.stringify(result));
+          break;
         default:
           const error = `Action '${action}' not recognized`;
           console.error(error);

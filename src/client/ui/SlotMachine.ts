@@ -6,7 +6,8 @@ import {ReelsWindow} from "./ReelsWindow.ts";
 import {Option, SelectOneBox} from "./SelectOneBox.ts";
 import {GameSocketClient} from "../ws/GameSocketClient.ts";
 import {ButtonState} from "./ButtonState.ts";
-import {SpinResponse} from "../ws/InterfaceResponse.ts";
+import {PaylineInfo, SpinResponse} from "../ws/InterfaceResponse.ts";
+import {PaylineGraphic} from "./PaylineGraphic.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -23,6 +24,10 @@ export class SlotMachine extends PIXI.Container {
   private stakeSelectOneBox: SelectOneBox;
 
   private mustShowResults = false;
+
+  private gottenPaylinesInfo: PaylineInfo[] = [];
+
+  private paylineGraphics: PaylineGraphic[] = [];
 
   constructor() {
     super();
@@ -86,18 +91,22 @@ export class SlotMachine extends PIXI.Container {
         return;
       }
 
+      this.paylineGraphics.forEach(paylineGraphic => {
+        this.removeChild(paylineGraphic);
+      });
+
+      this.paylineGraphics = [];
+
       this.mustShowResults = true;
 
       this.playButton.buttonState = ButtonState.disabled;
       const socket = GameSocketClient.instance;
       const afterSpinEvent = (data: any) => {
         const spinResponse: SpinResponse = data;
-
         console.log("Symbols after spín=",spinResponse.symbolsArray);
-
         this.reelsWindow.fireSlotMachinePlay(spinResponse.symbolsArray);
-
         globalSettings.moneyBalance = spinResponse.moneyBalance;
+        this.gottenPaylinesInfo =  spinResponse.gottenPaylinesInfo;
       };
 
       socket.spin(globalSettings.stake, afterSpinEvent);
@@ -115,6 +124,16 @@ export class SlotMachine extends PIXI.Container {
       PIXI.Ticker.shared.remove(this.slotMachineIsStopped);
 
       this.playButton.buttonState = ButtonState.ready;
+
+      this.gottenPaylinesInfo.forEach(paylineInfo => {
+        const reelsWindowSize= this.calculateBoundsReelsWindow();
+        const paylineGraphic:PaylineGraphic = new PaylineGraphic(paylineInfo.payline.payline, paylineInfo.numberOfCoincidences, reelsWindowSize.reelsWindowWidth/5, reelsWindowSize.reelsWindowHeight/3, reelsWindowSize.reelsWindowX, reelsWindowSize.reelsWindowY);
+        this.addChild(paylineGraphic);
+        this.paylineGraphics.push(paylineGraphic);
+
+      });
+
+      this.gottenPaylinesInfo = [];
       console.log("Spin is finished!!! Let's show some results");
     }
 
@@ -264,5 +283,13 @@ export class SlotMachine extends PIXI.Container {
     this.stakeSelectOneBox.selectOneBoxX = stakeSelectOneBoxX;
     this.stakeSelectOneBox.selectOneBoxY = stakeSelectOneBoxY;
     this.stakeSelectOneBox.resize();
+
+    this.paylineGraphics.forEach(paylineGraphic => {
+      paylineGraphic.slotWidth = reelsWindowWidth/5;
+      paylineGraphic.slotHeight = reelsWindowHeight/3;
+      paylineGraphic.reelsWindowX = reelsWindowX;
+      paylineGraphic.reelsWindowY = reelsWindowY;
+      paylineGraphic.resize();
+    });
   };
 }

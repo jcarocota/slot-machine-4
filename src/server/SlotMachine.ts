@@ -178,4 +178,11 @@ export class SlotMachine {
       moneyBalance: this.moneyBalance,
     };
   };
+
+  getPaylines = (idRequest: number) => {
+    return {
+      idRequest: idRequest,
+      availablePaylines: paylines
+    }
+  };
 }
