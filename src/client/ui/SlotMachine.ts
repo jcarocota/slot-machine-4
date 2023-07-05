@@ -8,6 +8,7 @@ import { GameSocketClient } from "../ws/GameSocketClient.ts";
 import { ButtonState } from "./ButtonState.ts";
 import { SpinResponse } from "../ws/InterfaceResponse.ts";
 import { PaylineGraphic } from "./PaylineGraphic.ts";
+import {WinAnimation} from "./WinAnimation.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -24,6 +25,7 @@ export class SlotMachine extends PIXI.Container {
   private stakeSelectOneBox: SelectOneBox;
 
   private paylineGraphics: PaylineGraphic[] = [];
+  private winningsGraphics: WinAnimation[] = [];
 
   // @ts-ignore
   private lastSpinResponse: SpinResponse | undefined;
@@ -94,7 +96,12 @@ export class SlotMachine extends PIXI.Container {
         this.removeChild(paylineGraphic);
       });
 
+      this.winningsGraphics.forEach(winningGraphic => {
+        this.removeChild(winningGraphic);
+      });
+
       this.paylineGraphics = [];
+      this.winningsGraphics = [];
 
       this.playButton.buttonState = ButtonState.disabled;
       const socket = GameSocketClient.instance;
@@ -110,6 +117,7 @@ export class SlotMachine extends PIXI.Container {
 
       socket.spin(globalSettings.stake, afterSpinEvent);
       globalSettings.lastRoundStake = globalSettings.stake;
+      globalSettings.lastRoundWinning = 0;
 
       //PIXI.Ticker.shared.add(this.slotMachineIsStopped);
     };
@@ -123,6 +131,7 @@ export class SlotMachine extends PIXI.Container {
       this.playButton.buttonState = ButtonState.ready;
 
       if (this.lastSpinResponse) {
+        const amountTotalWin = this.lastSpinResponse.amountTotalWin;
         this.lastSpinResponse.gottenPaylinesInfo.forEach((paylineInfo) => {
           const reelsWindowSize = this.calculateBoundsReelsWindow();
           const paylineGraphic: PaylineGraphic = new PaylineGraphic(
@@ -135,10 +144,16 @@ export class SlotMachine extends PIXI.Container {
           );
           this.addChild(paylineGraphic);
           this.paylineGraphics.push(paylineGraphic);
+
+          const reelsWindowBounds = this.calculateBoundsReelsWindow();
+          const winAnimation:WinAnimation = new WinAnimation(amountTotalWin, reelsWindowBounds.reelsWindowX + reelsWindowBounds.reelsWindowWidth/2, reelsWindowBounds.reelsWindowY + reelsWindowBounds.reelsWindowHeight/2);
+          this.addChild(winAnimation);
+          this.winningsGraphics.push(winAnimation);
         });
 
         globalSettings.moneyBalance = this.lastSpinResponse.moneyBalance;
         globalSettings.lastRoundWinning = this.lastSpinResponse.amountTotalWin;
+
         this.lastSpinResponse = undefined;
       }
     }

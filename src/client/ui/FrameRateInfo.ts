@@ -39,7 +39,7 @@ export class FrameRateInfo extends PIXI.Container {
 
     this.text.style = {
       fontFamily: "Verdana",
-      fontSize: 10,
+      fontSize: 12,
       fill: ["#000000"],
     };
   };
