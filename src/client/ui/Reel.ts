@@ -1,8 +1,9 @@
 import * as PIXI from "pixi.js";
+// @ts-ignore
 import * as TWEEN from "@tweenjs/tween.js";
 import { Slot } from "./Slot.ts";
 import { gameConfig } from "../config/GameConfig.ts";
-import {globalSettings} from "../GlobalSettings.ts";
+import { globalSettings } from "../GlobalSettings.ts";
 
 export class Reel extends PIXI.Container {
   private slots: Slot[] = [];
@@ -54,7 +55,7 @@ export class Reel extends PIXI.Container {
     this.calculateSlotDimensions();
 
     const stripSize = this.strip.length;
-    for (let i = 0; i < stripSize ; i++) {
+    for (let i = 0; i < stripSize; i++) {
       const slot: Slot = new Slot(
         this.strip[i],
         this.slotWidth,
@@ -64,11 +65,11 @@ export class Reel extends PIXI.Container {
       this.slots.push(slot);
     }
 
-    for (let i = 0; i < stripSize ; i++) {
+    for (let i = 0; i < stripSize; i++) {
       const slot: Slot = new Slot(
-          this.strip[i],
-          this.slotWidth,
-          this.slotHeight
+        this.strip[i],
+        this.slotWidth,
+        this.slotHeight
       );
       //console.log("this.reelHeight / 3 =", this.reelHeight / 3);
       this.slots.push(slot);
@@ -96,27 +97,31 @@ export class Reel extends PIXI.Container {
   };
 
   private setSlotPositions = () => {
-    let posY = this.reelY + this.slotHeight*2;
-    for(let i = this.slots.length-1; i >= 0; i--) {
+    let posY = this.reelY + this.slotHeight * 2;
+    for (let i = this.slots.length - 1; i >= 0; i--) {
       this.slots[i].y = posY;
       this.slots[i].x = this.reelX;
-      posY-=this.slotHeight;
+      posY -= this.slotHeight;
     }
-  }
+  };
 
   private calculateSlotDimensions = () => {
     this.slotWidth = this.reelWidth;
-    this.slotHeight = this.reelHeight/3;
+    this.slotHeight = this.reelHeight / 3;
 
     //console.log("this.slotWidth=",this.slotWidth,"this.slotHeight=",this.slotHeight);
-  }
+  };
 
   private setVisibleSymbolsConfig = () => {
     let slotsReady = false;
-    let idLastSlot = this.slots.length-1;
+    let idLastSlot = this.slots.length - 1;
 
-    while(!slotsReady) {
-      if(this.visibleSymbols[2] == this.slots[idLastSlot].idTexture && this.visibleSymbols[1] == this.slots[idLastSlot-1].idTexture && this.visibleSymbols[0] == this.slots[idLastSlot-2].idTexture) {
+    while (!slotsReady) {
+      if (
+        this.visibleSymbols[2] == this.slots[idLastSlot].idTexture &&
+        this.visibleSymbols[1] == this.slots[idLastSlot - 1].idTexture &&
+        this.visibleSymbols[0] == this.slots[idLastSlot - 2].idTexture
+      ) {
         slotsReady = true;
       } else {
         const slotToMove = this.slots[idLastSlot];
@@ -124,7 +129,6 @@ export class Reel extends PIXI.Container {
         this.slots.unshift(slotToMove);
       }
     }
-
   };
 
   private draw = () => {
@@ -145,7 +149,6 @@ export class Reel extends PIXI.Container {
     });
 
     this.setSlotPositions();
-
   };
 
   private calculateSpaceToMoveOnY = () => {
@@ -169,13 +172,17 @@ export class Reel extends PIXI.Container {
 
     let spaceToMoveOnY = this.slotHeight;
     let stopCalculating = false;
-    let idSlot = this.slots.length-2;
+    let idSlot = this.slots.length - 2;
 
-    while(!stopCalculating) {
-      if(this.visibleSymbols[2] == this.slots[idSlot].idTexture && this.visibleSymbols[1] == this.slots[idSlot-1].idTexture && this.visibleSymbols[0] == this.slots[idSlot-2].idTexture) {
+    while (!stopCalculating) {
+      if (
+        this.visibleSymbols[2] == this.slots[idSlot].idTexture &&
+        this.visibleSymbols[1] == this.slots[idSlot - 1].idTexture &&
+        this.visibleSymbols[0] == this.slots[idSlot - 2].idTexture
+      ) {
         stopCalculating = true;
       } else {
-        spaceToMoveOnY+=this.slotHeight;
+        spaceToMoveOnY += this.slotHeight;
         idSlot--;
       }
     }
@@ -184,9 +191,10 @@ export class Reel extends PIXI.Container {
   };
 
   animateReel = (
-      symbolsAfterSpin: number[],
+    symbolsAfterSpin: number[],
     duration: number,
-    delayInMillis: number
+    delayInMillis: number,
+    animationFinishedEvent: () => void
   ) => {
     this.visibleSymbols = symbolsAfterSpin;
     const spaceToMoveOnY = this.calculateSpaceToMoveOnY();
@@ -226,8 +234,6 @@ export class Reel extends PIXI.Container {
     tween.start();
 
     tween.onComplete(() => {
-
-
       this.slots.forEach((slot) => {
         this.setVisibleSymbolsConfig();
         this.setSlotPositions();
@@ -235,18 +241,8 @@ export class Reel extends PIXI.Container {
       });
 
       globalSettings.numberOfReelsSpinning--;
-/*
-      if(this.slots[0].y >  this.reelY - (this.reelHeight / 16)*2) {
-        const lastSlot = this.slots[this.slots.length-1];
-        lastSlot.y = this.reelY - (this.reelHeight / 16)*2;
-        this.slots.pop();
-        this.slots.unshift(lastSlot);
-        //this.resize();
 
-      }
-      */
-
-
+      animationFinishedEvent();
     });
 
     const animate = (time: number) => {

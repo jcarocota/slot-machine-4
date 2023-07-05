@@ -53,19 +53,19 @@ export class App extends PIXI.Application {
         globalSettings.stripsWithActualOffset.push([...strip]);
       });
 
-      console.log("globalSettings.strips=", globalSettings.strips);
+      //console.log("globalSettings.strips=", globalSettings.strips);
     };
 
     const setMoneyBalance = (data: any) => {
       const moneyBalanceResponse: MoneyBalanceResponse = data;
       globalSettings.moneyBalance = moneyBalanceResponse.moneyBalance;
-      console.log("globalSettings.moneyBalance=", globalSettings.moneyBalance);
+      //console.log("globalSettings.moneyBalance=", globalSettings.moneyBalance);
     };
 
     const setSymbols = (data: any) => {
       const symbolsResponse: SymbolsResponse = data;
       globalSettings.symbols = symbolsResponse.symbols;
-      console.log("globalSettings.symbols=", globalSettings.symbols);
+      //console.log("globalSettings.symbols=", globalSettings.symbols);
     };
 
     const checkIfAppLoaded = () => {
@@ -92,18 +92,17 @@ export class App extends PIXI.Application {
     PIXI.Ticker.shared.add(checkIfAppLoaded);
 
     //Load Symbols Info
-    const idRequestSymbols = this.gameSocketClient.symbols(setSymbols);
-    console.info("Retrieving symbol's ID. Request ID:", idRequestSymbols);
+    this.gameSocketClient.symbols(setSymbols);
+    //console.info("Retrieving symbol's ID. Request ID:", idRequestSymbols);
 
-    const idRequestStrips = this.gameSocketClient.strips(setStrips);
-    console.info("Retrieving Strips. Request ID:", idRequestStrips);
+    this.gameSocketClient.strips(setStrips);
+    //console.info("Retrieving Strips. Request ID:", idRequestStrips);
 
-    const idRequestMoneyBalance =
-      this.gameSocketClient.balance(setMoneyBalance);
-    console.info(
+    this.gameSocketClient.balance(setMoneyBalance);
+    /*console.info(
       "Retrieving Money Balance. Request ID:",
       idRequestMoneyBalance
-    );
+    );*/
   };
 
   private loadGameAssets = () => {

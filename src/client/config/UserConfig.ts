@@ -3,7 +3,7 @@ export interface UserConfig {
   aspectRatioHeight: number;
   backgroundAppColor: number;
   backgroundReelColor: number;
-  debugMode:number;
+  debugMode: number;
   questionMarkAsset: string;
   slotMachineSheet: string;
   slotMachineBlurredSheet: string;
@@ -23,7 +23,8 @@ export const userConfig: UserConfig = {
   slotMachineSheet: "./src/client/assets/fruits-normal.json", //Path of slot machine sprites' atlas
   slotMachineBlurredSheet: "./src/client/assets/fruits-full-blur.json", //Path of slot machine sprites' atlas
   slotMachineSemiBlurredSheet: "./src/client/assets/fruits-medium-blur.json", //Path of slot machine sprites' atlas
-  slotMachineDebugModeSheet: "./src/client/assets/fruits-normal-debug-mode.json", //Path of slot machine sprites' atlas
+  slotMachineDebugModeSheet:
+    "./src/client/assets/fruits-normal-debug-mode.json", //Path of slot machine sprites' atlas
   wsUrl: "localhost",
   wsPort: 3000,
 };

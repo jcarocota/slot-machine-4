@@ -182,7 +182,7 @@ export class SlotMachine {
   getPaylines = (idRequest: number) => {
     return {
       idRequest: idRequest,
-      availablePaylines: paylines
-    }
+      availablePaylines: paylines,
+    };
   };
 }

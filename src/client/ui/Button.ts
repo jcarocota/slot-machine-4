@@ -101,7 +101,7 @@ export class Button extends PIXI.Container {
         buttonUI = this._buttonUIPointerOver
           ? this._buttonUIPointerOver
           : buttonUI;
-        console.log("Mouse over button");
+        //console.log("Mouse over button");
         break;
       case ButtonState.disabled:
         buttonUI = this._buttonUIDisabled ? this._buttonUIDisabled : buttonUI;

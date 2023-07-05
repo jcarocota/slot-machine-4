@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js";
 //import * as TWEEN from "@tweenjs/tween.js";
-import {Reel} from "./Reel.ts";
-import {InitPositionsResponse} from "../ws/InterfaceResponse.ts";
-import {globalSettings} from "../GlobalSettings.ts";
-import {GameSocketClient} from "../ws/GameSocketClient.ts";
+import { Reel } from "./Reel.ts";
+import { InitPositionsResponse } from "../ws/InterfaceResponse.ts";
+import { globalSettings } from "../GlobalSettings.ts";
+import { GameSocketClient } from "../ws/GameSocketClient.ts";
 
 export class ReelsWindow extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -115,52 +115,34 @@ export class ReelsWindow extends PIXI.Container {
   private generateReels = () => {
     console.log("Generating reels");
     this.strips.forEach((strip, i) => {
-      const columnSymbolsInit = [this.symbolsInit[0][i], this.symbolsInit[1][i], this.symbolsInit[2][i]];
+      const columnSymbolsInit = [
+        this.symbolsInit[0][i],
+        this.symbolsInit[1][i],
+        this.symbolsInit[2][i],
+      ];
 
-      console.log("number of reel=",i,"columnSymbolsInit=",columnSymbolsInit);
+      console.log(
+        "number of reel=",
+        i,
+        "columnSymbolsInit=",
+        columnSymbolsInit
+      );
       const reel: Reel = new Reel(
         this.reelsWindowWidth / 5,
-          this.reelsWindowHeight, //(this.reelsWindowHeight / 3) * 16,
+        this.reelsWindowHeight, //(this.reelsWindowHeight / 3) * 16,
         this.reelsWindowX + (this.reelsWindowWidth / 5) * i,
         this.reelsWindowY,
         strip,
-          columnSymbolsInit
+        columnSymbolsInit
       );
       this.reels.push(reel);
     });
   };
 
-  fireSlotMachinePlay = (symbolsArray:number[][]) => {
-    /*const positionIni = {x:0, y:0, rotation: 0};
-    const positionEnd = {x:0, y:100, rotation: 0};
-
-    const update = () => {
-      this.x = positionIni.x;
-      this.y = positionIni.y;
-
-      console.log("positionIni:",positionIni);
-      console.log("positionEnd:",positionEnd);
-    };
-
-    let tween = new TWEEN.Tween(positionIni).to(positionEnd, 2000).delay(1000).easing(TWEEN.Easing.Elastic.InOut).onUpdate(update);
-    let tweenBack = new TWEEN.Tween(positionEnd).to(positionIni, 2000).delay(1000).easing(TWEEN.Easing.Elastic.InOut).onUpdate(update);
-
-    tween.chain(tweenBack);
-    //tweenBack.chain(tween);
-
-
-
-    tween.start();
-
-    const animate = (time:number) => {
-      tween.update(time);
-      requestAnimationFrame(animate)
-    }
-
-    requestAnimationFrame(animate);
-
-    console.log("Tween started");*/
-
+  fireSlotMachinePlay = (
+    symbolsArray: number[][],
+    animationFinishedEvent: () => void
+  ) => {
     const durationWholeAnimation = 5000;
     const delayInMillis = 100;
     const minDurationReelAnimation = 1000;
@@ -175,23 +157,19 @@ export class ReelsWindow extends PIXI.Container {
     this.reels.forEach((reel, i) => {
       const symbolsAfterSpin: number[] = [];
 
-      symbolsArray.forEach(row =>{
+      symbolsArray.forEach((row) => {
         symbolsAfterSpin.push(row[i]);
       });
 
-      reel.animateReel(symbolsAfterSpin, reelAnimationDuration, i * delayInMillis);
+      reel.animateReel(
+        symbolsAfterSpin,
+        reelAnimationDuration,
+        i * delayInMillis,
+        animationFinishedEvent
+      );
       globalSettings.numberOfReelsSpinning++;
       //console.log("Slot=", i, "delayInMillis=",i*delayInMillis);
     });
-
-    /*const symbolsAfterSpin: number[] = [];
-    symbolsArray.forEach(row =>{
-      symbolsAfterSpin.push(row[0]);
-    });
-    this.reels[0].animateReel(symbolsAfterSpin, reelAnimationDuration, 0 * delayInMillis);*/
-
-
-
   };
 
   private draw = () => {

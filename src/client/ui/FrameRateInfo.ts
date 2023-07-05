@@ -23,7 +23,11 @@ export class FrameRateInfo extends PIXI.Container {
       () =>
         (this.text.text = `FPS: ${Math.round(
           PIXI.Ticker.shared.FPS
-        )}\t\t\tBalance: ${globalSettings.moneyBalance} USD`)
+        )}\t\t\tBalance: ${
+          globalSettings.moneyBalance
+        } USD\t\t\tLast round Stake: ${
+          globalSettings.lastRoundStake
+        } USD\t\t\tLast round Winning: ${globalSettings.lastRoundWinning} USD`)
     );
 
     this.addChild(this.text);
