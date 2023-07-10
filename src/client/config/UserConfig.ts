@@ -25,6 +25,6 @@ export const userConfig: UserConfig = {
   slotMachineSemiBlurredSheet: "./src/client/assets/fruits-medium-blur.json", //Path of slot machine sprites' atlas
   slotMachineDebugModeSheet:
     "./src/client/assets/fruits-normal-debug-mode.json", //Path of slot machine sprites' atlas
-  wsUrl: "localhost",
+  wsUrl: "192.168.1.106",
   wsPort: 3000,
 };

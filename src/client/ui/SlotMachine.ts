@@ -146,7 +146,7 @@ export class SlotMachine extends PIXI.Container {
           this.paylineGraphics.push(paylineGraphic);
 
           const reelsWindowBounds = this.calculateBoundsReelsWindow();
-          const winAnimation:WinAnimation = new WinAnimation(amountTotalWin, reelsWindowBounds.reelsWindowX + reelsWindowBounds.reelsWindowWidth/2, reelsWindowBounds.reelsWindowY + reelsWindowBounds.reelsWindowHeight/2);
+          const winAnimation:WinAnimation = new WinAnimation(amountTotalWin, reelsWindowBounds.reelsWindowX + reelsWindowBounds.reelsWindowWidth/2, reelsWindowBounds.reelsWindowY + reelsWindowBounds.reelsWindowHeight/2, reelsWindowBounds.reelsWindowX, reelsWindowBounds.reelsWindowWidth);
           this.addChild(winAnimation);
           this.winningsGraphics.push(winAnimation);
         });

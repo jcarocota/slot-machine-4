@@ -64,7 +64,7 @@ export class SelectOneBox extends PIXI.Container {
     this.createMenuOptions();
 
     this.addChild(this.background);
-    this.addChild(this.downArrow);
+    //this.addChild(this.downArrow);
 
     this.draw();
 

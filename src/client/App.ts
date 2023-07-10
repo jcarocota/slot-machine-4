@@ -150,6 +150,7 @@ export class App extends PIXI.Application {
   private calculateWindowSize = () => {
     globalSettings.windowWidth = window.innerWidth;
     globalSettings.windowHeight = window.innerHeight;
+    //alert(globalSettings.windowWidth +'x' +globalSettings.windowHeight);
   };
 
   private calculateSlotMachineDimentions = () => {
