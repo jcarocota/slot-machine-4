@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { globalSettings } from "../GlobalSettings.ts";
 import { Button } from "./Button.ts";
-import { FrameRateInfo } from "./FrameRateInfo.ts";
+import { InfoBar } from "./InfoBar.ts";
 import { ReelsWindow } from "./ReelsWindow.ts";
 import { Option, SelectOneBox } from "./SelectOneBox.ts";
 import { GameSocketClient } from "../ws/GameSocketClient.ts";
@@ -9,6 +9,7 @@ import { ButtonState } from "./ButtonState.ts";
 import { SpinResponse } from "../ws/InterfaceResponse.ts";
 import { PaylineGraphic } from "./PaylineGraphic.ts";
 import { WinAnimation } from "./WinAnimation.ts";
+import { gameConfig } from "../config/GameConfig.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -16,7 +17,7 @@ export class SlotMachine extends PIXI.Container {
   private playButton: Button;
 
   // @ts-ignore
-  private frameRateInfo: FrameRateInfo;
+  private infoBar: InfoBar;
 
   // @ts-ignore
   private reelsWindow: ReelsWindow;
@@ -40,7 +41,7 @@ export class SlotMachine extends PIXI.Container {
 
   private init = () => {
     this.createPlayButton();
-    this.createFrameRateInfo();
+    this.createInfoBar();
     this.createReelsWindow();
     this.createStakeSelectOneBox();
     this.createCheatPanel();
@@ -48,7 +49,7 @@ export class SlotMachine extends PIXI.Container {
     this.draw();
 
     this.addChild(this.background);
-    this.addChild(this.frameRateInfo);
+    this.addChild(this.infoBar);
     this.addChild(this.reelsWindow);
     this.addChild(this.stakeSelectOneBox);
     this.addChild(this.playButton);
@@ -56,7 +57,7 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private draw = () => {
-    this.background.beginFill(0xd5d8dc);
+    this.background.beginFill(gameConfig.backgroundSlotMachineColor);
     this.background.drawRect(
       globalSettings.slotMachinePosX,
       globalSettings.slotMachinePosY,
@@ -72,16 +73,25 @@ export class SlotMachine extends PIXI.Container {
 
     this.playButton = new Button(buttonWidth, buttonHeight, buttonX, buttonY);
 
-    this.playButton.setButtonUIReady(0x2ecc71, "Ready to play!");
-    this.playButton.setButtonUIDisabled(0x566573, "Spinning...");
-    this.playButton.setButtonUIPointerOver(0xf4d03f, "Click now!");
+    this.playButton.setButtonUIReady(
+      gameConfig.backgroundPlayButtonIdleColor,
+      gameConfig.textPlayButtonIdle
+    );
+    this.playButton.setButtonUIDisabled(
+      gameConfig.backgroundPlayButtonDisabledColor,
+      gameConfig.textPlayButtonDisabled
+    );
+    this.playButton.setButtonUIPointerHover(
+      gameConfig.backgroundPlayButtonHoverColor,
+      gameConfig.textPlayButtonHover
+    );
 
     this.playButton.buttonState = ButtonState.ready;
 
     this.playButton.pointerOver = () => {
       //console.log("Mouse over button", "this.eventMode=", this.eventMode);
       if (this.playButton.buttonState != ButtonState.disabled) {
-        this.playButton.buttonState = ButtonState.pointerover;
+        this.playButton.buttonState = ButtonState.pointerhover;
       }
     };
 
@@ -113,7 +123,7 @@ export class SlotMachine extends PIXI.Container {
       const afterSpinEvent = (data: any) => {
         const spinResponse: SpinResponse = data;
         this.lastSpinResponse = spinResponse;
-        console.log("Symbols after spín=", spinResponse.symbolsArray);
+        //console.log("Symbols after spín=", spinResponse.symbolsArray);
         this.reelsWindow.fireSlotMachinePlay(
           spinResponse.symbolsArray,
           this.slotMachineIsStopped
@@ -185,20 +195,20 @@ export class SlotMachine extends PIXI.Container {
     }
   };
 
-  private createFrameRateInfo = () => {
-    const frameRateInfoBounds = this.calculateBoundsFrameRateInfo();
-    this.frameRateInfo = new FrameRateInfo(
-      frameRateInfoBounds.frameRateX,
-      frameRateInfoBounds.frameRateY,
-      frameRateInfoBounds.frameRateInfoWidth,
-      frameRateInfoBounds.frameRateInfoHeight,
+  private createInfoBar = () => {
+    const frameRateInfoBounds = this.calculateBoundsInfoBar();
+    this.infoBar = new InfoBar(
+      frameRateInfoBounds.labelX,
+      frameRateInfoBounds.labelY,
+      frameRateInfoBounds.infoBarWidth,
+      frameRateInfoBounds.infoBarHeight,
       frameRateInfoBounds.barX,
       frameRateInfoBounds.barY
     );
   };
 
   private createReelsWindow = () => {
-    console.log("Creating reels window");
+    //console.log("Creating reels window");
     const { reelsWindowWidth, reelsWindowHeight, reelsWindowX, reelsWindowY } =
       this.calculateBoundsReelsWindow();
     this.reelsWindow = new ReelsWindow(
@@ -250,14 +260,14 @@ export class SlotMachine extends PIXI.Container {
 
     const options: Option[] = [];
     options.push({ value: -1, description: "Regular spin" });
-    options.push({ value: 0, description: "1 pyl: 3 c" });
-    options.push({ value: 1, description: "1 pyl: 4 c" });
-    options.push({ value: 2, description: "1 pyl: 5 c" });
-    options.push({ value: 3, description: "2 pyl: 4 & 4 c" });
-    options.push({ value: 4, description: "3 pyl: 4, 4 & 4 c" });
-    options.push({ value: 5, description: "2 pyl: 5 & 3 c" });
-    options.push({ value: 6, description: "3 pyl: 5, 3 & 3 c" });
-    options.push({ value: 7, description: "3 pyl: 5, 4 & 3 c" });
+    options.push({ value: 0, description: "1 pyl: 3 sym" });
+    options.push({ value: 1, description: "1 pyl: 4 sym" });
+    options.push({ value: 2, description: "1 pyl: 5 sym" });
+    options.push({ value: 3, description: "2 pyl: 4 & 4 sym" });
+    options.push({ value: 4, description: "3 pyl: 4, 4 & 4 sym" });
+    options.push({ value: 5, description: "2 pyl: 5 & 3 sym" });
+    options.push({ value: 6, description: "3 pyl: 5, 3 & 3 sym" });
+    options.push({ value: 7, description: "3 pyl: 5, 4 & 3 sym" });
 
     const setCheatStatus = (idCheat: number) => {
       globalSettings.idCheat = idCheat;
@@ -290,27 +300,27 @@ export class SlotMachine extends PIXI.Container {
     return { buttonWidth, buttonHeight, buttonX, buttonY };
   };
 
-  private calculateBoundsFrameRateInfo = () => {
-    const frameRateInfoWidth = globalSettings.slotMachineWidth * 0.75;
-    const frameRateInfoHeight = globalSettings.slotMachineHeight * 0.05;
+  private calculateBoundsInfoBar = () => {
+    const infoBarWidth = globalSettings.slotMachineWidth * 0.75;
+    const infoBarHeight = globalSettings.slotMachineHeight * 0.05;
 
-    const frameRateX = globalSettings.slotMachinePosX;
-    const frameRateY =
+    const labelX = globalSettings.slotMachinePosX;
+    const labelY =
       globalSettings.slotMachinePosY +
       globalSettings.slotMachineHeight -
-      frameRateInfoHeight / 2;
+      infoBarHeight / 2;
 
     const barX = globalSettings.slotMachinePosX;
     const barY =
       globalSettings.slotMachinePosY +
       globalSettings.slotMachineHeight -
-      frameRateInfoHeight;
+      infoBarHeight;
 
     return {
-      frameRateX,
-      frameRateY,
-      frameRateInfoWidth,
-      frameRateInfoHeight,
+      labelX,
+      labelY,
+      infoBarWidth,
+      infoBarHeight,
       barX,
       barY,
     };
@@ -374,29 +384,27 @@ export class SlotMachine extends PIXI.Container {
     this.background.clear();
     this.draw();
 
-    const { buttonWidth, buttonHeight, buttonX, buttonY } =
-      this.calculateBoundsPlayButton();
-    this.playButton.buttonWidth = buttonWidth;
-    this.playButton.buttonHeight = buttonHeight;
-    this.playButton.buttonX = buttonX;
-    this.playButton.buttonY = buttonY;
+    const playButtonBounds = this.calculateBoundsPlayButton();
+    this.playButton.buttonWidth = playButtonBounds.buttonWidth;
+    this.playButton.buttonHeight = playButtonBounds.buttonHeight;
+    this.playButton.buttonX = playButtonBounds.buttonX;
+    this.playButton.buttonY = playButtonBounds.buttonY;
     this.playButton.resize();
 
-    const frameRateInfoBounds = this.calculateBoundsFrameRateInfo();
-    this.frameRateInfo.textX = frameRateInfoBounds.frameRateX;
-    this.frameRateInfo.textY = frameRateInfoBounds.frameRateY;
-    this.frameRateInfo.barX = frameRateInfoBounds.barX;
-    this.frameRateInfo.barY = frameRateInfoBounds.barY;
-    this.frameRateInfo.barWidth = frameRateInfoBounds.frameRateInfoWidth;
-    this.frameRateInfo.barHeight = frameRateInfoBounds.frameRateInfoHeight;
-    this.frameRateInfo.resize();
+    const infoBarBounds = this.calculateBoundsInfoBar();
+    this.infoBar.textX = infoBarBounds.labelX;
+    this.infoBar.textY = infoBarBounds.labelY;
+    this.infoBar.barX = infoBarBounds.barX;
+    this.infoBar.barY = infoBarBounds.barY;
+    this.infoBar.barWidth = infoBarBounds.infoBarWidth;
+    this.infoBar.barHeight = infoBarBounds.infoBarHeight;
+    this.infoBar.resize();
 
-    const { reelsWindowWidth, reelsWindowHeight, reelsWindowX, reelsWindowY } =
-      this.calculateBoundsReelsWindow();
-    this.reelsWindow.reelsWindowWidth = reelsWindowWidth;
-    this.reelsWindow.reelsWindowHeight = reelsWindowHeight;
-    this.reelsWindow.reelsWindowX = reelsWindowX;
-    this.reelsWindow.reelsWindowY = reelsWindowY;
+    const reelsWindowBounds = this.calculateBoundsReelsWindow();
+    this.reelsWindow.reelsWindowWidth = reelsWindowBounds.reelsWindowWidth;
+    this.reelsWindow.reelsWindowHeight = reelsWindowBounds.reelsWindowHeight;
+    this.reelsWindow.reelsWindowX = reelsWindowBounds.reelsWindowX;
+    this.reelsWindow.reelsWindowY = reelsWindowBounds.reelsWindowY;
     this.reelsWindow.resize();
 
     const {
@@ -412,10 +420,10 @@ export class SlotMachine extends PIXI.Container {
     this.stakeSelectOneBox.resize();
 
     this.paylineGraphics.forEach((paylineGraphic) => {
-      paylineGraphic.slotWidth = reelsWindowWidth / 5;
-      paylineGraphic.slotHeight = reelsWindowHeight / 3;
-      paylineGraphic.reelsWindowX = reelsWindowX;
-      paylineGraphic.reelsWindowY = reelsWindowY;
+      paylineGraphic.slotWidth = reelsWindowBounds.reelsWindowWidth / 5;
+      paylineGraphic.slotHeight = reelsWindowBounds.reelsWindowHeight / 3;
+      paylineGraphic.reelsWindowX = reelsWindowBounds.reelsWindowX;
+      paylineGraphic.reelsWindowY = reelsWindowBounds.reelsWindowY;
       paylineGraphic.resize();
     });
   };

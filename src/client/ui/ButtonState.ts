@@ -1,5 +1,5 @@
 export enum ButtonState {
   ready,
-  pointerover,
+  pointerhover,
   disabled,
 }

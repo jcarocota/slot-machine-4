@@ -10,6 +10,7 @@ export enum RequestType {
   spin,
   strips,
   symbols,
+  cheat,
 }
 
 export interface RequestValues {

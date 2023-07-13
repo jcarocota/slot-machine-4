@@ -1,7 +1,8 @@
 import * as PIXI from "pixi.js";
 import { globalSettings } from "../GlobalSettings.ts";
+import { gameConfig } from "../config/GameConfig.ts";
 
-export class FrameRateInfo extends PIXI.Container {
+export class InfoBar extends PIXI.Container {
   private text = new PIXI.Text();
   private background = new PIXI.Graphics();
 
@@ -63,7 +64,7 @@ export class FrameRateInfo extends PIXI.Container {
       fill: ["#FFFFFF"],
     };
 
-    this.background.beginFill(0x5d5d5d);
+    this.background.beginFill(gameConfig.backgroundInfoBarColor);
     this.background.drawRect(
       this.barX,
       this.barY,

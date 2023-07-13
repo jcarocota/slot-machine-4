@@ -132,7 +132,7 @@ export class GameSocketClient extends WebSocket {
   };
 
   initPositions = (event: ((data: any) => void) | undefined) => {
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "init",
@@ -148,7 +148,7 @@ export class GameSocketClient extends WebSocket {
   };
 
   balance = (event: ((data: any) => void) | undefined) => {
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "balance",
@@ -164,7 +164,7 @@ export class GameSocketClient extends WebSocket {
   };
 
   spin = (stake: number, event: ((data: any) => void) | undefined) => {
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "spin",
@@ -174,7 +174,7 @@ export class GameSocketClient extends WebSocket {
     };
     this.sendMessage(JSON.stringify(query));
 
-    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
+    this.addRequestToTrackingMap(idRequest, RequestType.spin, event);
 
     return idRequest;
   };
@@ -184,7 +184,7 @@ export class GameSocketClient extends WebSocket {
     idCheat: number,
     event: ((data: any) => void) | undefined
   ) => {
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "cheat",
@@ -194,14 +194,14 @@ export class GameSocketClient extends WebSocket {
     };
     this.sendMessage(JSON.stringify(query));
 
-    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
+    this.addRequestToTrackingMap(idRequest, RequestType.cheat, event);
 
     return idRequest;
   };
 
   symbols = (event: ((data: any) => void) | undefined) => {
     const stake = 1;
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "symbols",
@@ -211,14 +211,14 @@ export class GameSocketClient extends WebSocket {
     };
     this.sendMessage(JSON.stringify(query));
 
-    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
+    this.addRequestToTrackingMap(idRequest, RequestType.symbols, event);
 
     return idRequest;
   };
 
   strips = (event: ((data: any) => void) | undefined) => {
     const stake = 1;
-    const idRequest = this.genetareIdRequest();
+    const idRequest = this.generateIdRequest();
     const query: RequestValues = {
       idRequest: idRequest,
       action: "strips",
@@ -233,7 +233,7 @@ export class GameSocketClient extends WebSocket {
     return idRequest;
   };
 
-  private genetareIdRequest = () => {
+  private generateIdRequest = () => {
     const array = new Uint32Array(1);
     crypto.getRandomValues(array);
     return array[0];

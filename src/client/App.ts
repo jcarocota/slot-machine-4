@@ -38,6 +38,7 @@ export class App extends PIXI.Application {
   };
 
   private loadGameData = () => {
+    //we start with one dollar
     globalSettings.stake = 1;
 
     const setStrips = (data: any) => {
@@ -69,22 +70,21 @@ export class App extends PIXI.Application {
     };
 
     const checkIfAppLoaded = () => {
-      console.log(
+      /*console.log(
         "globalSettings.symbols.length=",
         globalSettings.symbols.length,
         "globalSettings.strips.length=",
         globalSettings.strips.length,
         "globalSettings.moneyBalance=",
         globalSettings.moneyBalance
-      );
+      );*/
       if (
         globalSettings.symbols.length > 0 &&
         globalSettings.strips.length > 0 &&
         globalSettings.moneyBalance
       ) {
         PIXI.Ticker.shared.remove(checkIfAppLoaded);
-        console.log("App Loaded");
-        //this.onWindowResize();
+        //console.log("App Loaded");
         this.loadGameAssets();
       }
     };
@@ -183,6 +183,7 @@ export class App extends PIXI.Application {
   };
 
   private calculateSlotMachinePosition = () => {
+    //We set the slot machine in the middle of the screen
     globalSettings.slotMachinePosX =
       (globalSettings.windowWidth - globalSettings.slotMachineWidth) / 2;
     globalSettings.slotMachinePosY =
@@ -207,10 +208,6 @@ export class App extends PIXI.Application {
     //Add window rezise event. Slot Machine should resize too
     window.addEventListener("resize", this.onWindowResize);
   };
-
-  /*get gameSocketClient() {
-    return this._gameSocketClient;
-  }*/
 
   //------
 

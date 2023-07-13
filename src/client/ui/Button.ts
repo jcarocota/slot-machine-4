@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { ButtonState } from "./ButtonState.ts";
+import { gameConfig } from "../config/GameConfig.ts";
 
 export type stateUI = {
   backgroundColor: number;
@@ -17,7 +18,7 @@ export class Button extends PIXI.Container {
   private _pointerOut: () => void;
 
   private defaultUI: stateUI = {
-    backgroundColor: 0x2ecc71,
+    backgroundColor: gameConfig.backgroundButtonDefaultColor,
     textLabel: "",
     state: ButtonState.ready,
   };
@@ -26,7 +27,7 @@ export class Button extends PIXI.Container {
 
   private _buttonUIReady: stateUI | undefined;
   private _buttonUIDisabled: stateUI | undefined;
-  private _buttonUIPointerOver: stateUI | undefined;
+  private _buttonUIPointerHover: stateUI | undefined;
 
   private _buttonState: ButtonState = ButtonState.ready;
 
@@ -97,9 +98,9 @@ export class Button extends PIXI.Container {
         buttonUI = this._buttonUIReady ? this._buttonUIReady : buttonUI;
         //this.eventMode = "static";
         break;
-      case ButtonState.pointerover:
-        buttonUI = this._buttonUIPointerOver
-          ? this._buttonUIPointerOver
+      case ButtonState.pointerhover:
+        buttonUI = this._buttonUIPointerHover
+          ? this._buttonUIPointerHover
           : buttonUI;
         //console.log("Mouse over button");
         break;
@@ -157,9 +158,9 @@ export class Button extends PIXI.Container {
     };
   };
 
-  setButtonUIPointerOver = (buttonColor: number, buttonTextLabel: string) => {
-    this._buttonUIPointerOver = {
-      state: ButtonState.pointerover,
+  setButtonUIPointerHover = (buttonColor: number, buttonTextLabel: string) => {
+    this._buttonUIPointerHover = {
+      state: ButtonState.pointerhover,
       backgroundColor: buttonColor,
       textLabel: buttonTextLabel,
     };
