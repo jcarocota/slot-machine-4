@@ -46,6 +46,55 @@ export class SlotMachine {
     return symbolsArray;
   };
 
+  private generateCheatSymbolsArray = (idCheat: number) => {
+    const symbolsArray: number[][] = [];
+
+    switch (idCheat) {
+      case 0:
+        symbolsArray.push([2, 0, 3, 3, 1]);
+        symbolsArray.push([3, 4, 1, 0, 0]);
+        symbolsArray.push([1, 2, 2, 2, 2]);
+        break;
+      case 1:
+        symbolsArray.push([1, 1, 3, 1, 0]);
+        symbolsArray.push([0, 0, 1, 3, 2]);
+        symbolsArray.push([3, 2, 0, 0, 1]);
+        break;
+      case 2:
+        symbolsArray.push([2, 1, 2, 1, 1]);
+        symbolsArray.push([0, 0, 0, 0, 0]);
+        symbolsArray.push([2, 2, 0, 2, 2]);
+        break;
+      case 3:
+        symbolsArray.push([3, 3, 2, 3, 0]);
+        symbolsArray.push([2, 1, 4, 0, 2]);
+        symbolsArray.push([4, 0, 3, 4, 1]);
+        break;
+      case 4:
+        symbolsArray.push([3, 1, 0, 3, 1]);
+        symbolsArray.push([2, 0, 2, 0, 0]);
+        symbolsArray.push([0, 4, 4, 4, 2]);
+        break;
+      case 5:
+        symbolsArray.push([0, 3, 2, 1, 2]);
+        symbolsArray.push([3, 3, 3, 3, 3]);
+        symbolsArray.push([2, 1, 1, 0, 0]);
+        break;
+      case 6:
+        symbolsArray.push([4, 2, 4, 4, 4]);
+        symbolsArray.push([1, 3, 3, 1, 1]);
+        symbolsArray.push([3, 1, 1, 3, 3]);
+        break;
+      case 7:
+        symbolsArray.push([4, 1, 1, 1, 2]);
+        symbolsArray.push([1, 0, 2, 3, 1]);
+        symbolsArray.push([3, 2, 0, 2, 3]);
+        break;
+    }
+
+    return symbolsArray;
+  };
+
   private calculatePaylines = (symbolsArray: number[][], stake: number) => {
     const gottenPaylinesInfo: GottenPaylineInfo[] = [];
 
@@ -93,13 +142,14 @@ export class SlotMachine {
 
       if (numConsecutiveCoincidences >= 3) {
         const amountWinByLine =
-          stake +
+          //stake +
           stake * this.winPercentageBySymbol * numConsecutiveCoincidences;
         let gottenPaylineInfo = new GottenPaylineInfo(
           payline,
           numConsecutiveCoincidences,
           numBigWins,
-          amountWinByLine
+          amountWinByLine,
+          stake
         );
         gottenPaylinesInfo.push(gottenPaylineInfo);
       }
@@ -119,6 +169,10 @@ export class SlotMachine {
 
     amountTotalWin = Math.round((amountTotalWin + Number.EPSILON) * 100) / 100;
 
+    if (amountTotalWin > 0) {
+      amountTotalWin += gottenPaylinesInfo[0].stake;
+    }
+
     return amountTotalWin;
   };
 
@@ -131,8 +185,19 @@ export class SlotMachine {
     };
   };
 
-  spin = (stake: number, idRequest: number) => {
-    const symbolsArray = this.generateSymbolsArray();
+  spin = (
+    stake: number,
+    idRequest: number,
+    idCheat: number | undefined = undefined
+  ) => {
+    let symbolsArray: number[][];
+    //console.log("stake=",stake, "idRequest=",idRequest, "idCheat=",idCheat);
+    if (idCheat != undefined) {
+      symbolsArray = this.generateCheatSymbolsArray(idCheat);
+    } else {
+      symbolsArray = this.generateSymbolsArray();
+    }
+
     const gottenPaylinesInfo = this.calculatePaylines(symbolsArray, stake);
     const amountTotalWin = this.calculateAmountTotalWin(gottenPaylinesInfo);
     //const idsGottenPaylinesInfoArray: number[] = [];

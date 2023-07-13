@@ -138,6 +138,7 @@ export class GameSocketClient extends WebSocket {
       action: "init",
       user: "guest",
       stake: 1,
+      idCheat: undefined,
     };
     this.sendMessage(JSON.stringify(query));
 
@@ -153,6 +154,7 @@ export class GameSocketClient extends WebSocket {
       action: "balance",
       user: "guest",
       stake: 1,
+      idCheat: undefined,
     };
     this.sendMessage(JSON.stringify(query));
 
@@ -168,6 +170,27 @@ export class GameSocketClient extends WebSocket {
       action: "spin",
       user: "guest",
       stake: stake,
+      idCheat: undefined,
+    };
+    this.sendMessage(JSON.stringify(query));
+
+    this.addRequestToTrackingMap(idRequest, RequestType.balance, event);
+
+    return idRequest;
+  };
+
+  cheat = (
+    stake: number,
+    idCheat: number,
+    event: ((data: any) => void) | undefined
+  ) => {
+    const idRequest = this.genetareIdRequest();
+    const query: RequestValues = {
+      idRequest: idRequest,
+      action: "cheat",
+      user: "guest",
+      stake: stake,
+      idCheat: idCheat,
     };
     this.sendMessage(JSON.stringify(query));
 
@@ -184,6 +207,7 @@ export class GameSocketClient extends WebSocket {
       action: "symbols",
       user: "guest",
       stake: stake,
+      idCheat: undefined,
     };
     this.sendMessage(JSON.stringify(query));
 
@@ -200,6 +224,7 @@ export class GameSocketClient extends WebSocket {
       action: "strips",
       user: "guest",
       stake: stake,
+      idCheat: undefined,
     };
     this.sendMessage(JSON.stringify(query));
 

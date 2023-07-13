@@ -127,6 +127,10 @@ export class Button extends PIXI.Container {
     this.onpointerup = this._clickEvent;
   }
 
+  get clickEvent() {
+    return this._clickEvent;
+  }
+
   set pointerOver(value: () => void) {
     this._pointerOver = value;
     this.onpointerover = this._pointerOver;

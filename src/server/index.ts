@@ -68,6 +68,12 @@ wss.on("connection", (ws: WebSocket) => {
           result = slotMachine.getPaylines(idRequest);
           ws.send(JSON.stringify(result));
           break;
+        case "cheat":
+          const stakeCheat: number = jsonMessage["stake"];
+          const idCheat: number = jsonMessage["idCheat"];
+          result = slotMachine.spin(stakeCheat, idRequest, idCheat);
+          ws.send(JSON.stringify(result));
+          break;
         default:
           const error = `Action '${action}' not recognized`;
           console.error(error);

@@ -38,6 +38,7 @@ export interface PaylineInfo {
   numberOfCoincidences: number;
   numberOfBigWins: number;
   amountWinByLine: number;
+  stake: number;
 }
 
 export interface SpinResponse {

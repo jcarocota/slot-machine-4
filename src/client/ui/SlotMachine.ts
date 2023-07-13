@@ -8,7 +8,7 @@ import { GameSocketClient } from "../ws/GameSocketClient.ts";
 import { ButtonState } from "./ButtonState.ts";
 import { SpinResponse } from "../ws/InterfaceResponse.ts";
 import { PaylineGraphic } from "./PaylineGraphic.ts";
-import {WinAnimation} from "./WinAnimation.ts";
+import { WinAnimation } from "./WinAnimation.ts";
 
 export class SlotMachine extends PIXI.Container {
   private background = new PIXI.Graphics();
@@ -23,6 +23,9 @@ export class SlotMachine extends PIXI.Container {
 
   // @ts-ignore
   private stakeSelectOneBox: SelectOneBox;
+
+  // @ts-ignore
+  private cheatPanelSelectOneBox: SelectOneBox;
 
   private paylineGraphics: PaylineGraphic[] = [];
   private winningsGraphics: WinAnimation[] = [];
@@ -40,6 +43,7 @@ export class SlotMachine extends PIXI.Container {
     this.createFrameRateInfo();
     this.createReelsWindow();
     this.createStakeSelectOneBox();
+    this.createCheatPanel();
 
     this.draw();
 
@@ -48,6 +52,7 @@ export class SlotMachine extends PIXI.Container {
     this.addChild(this.reelsWindow);
     this.addChild(this.stakeSelectOneBox);
     this.addChild(this.playButton);
+    this.addChild(this.cheatPanelSelectOneBox);
   };
 
   private draw = () => {
@@ -96,7 +101,7 @@ export class SlotMachine extends PIXI.Container {
         this.removeChild(paylineGraphic);
       });
 
-      this.winningsGraphics.forEach(winningGraphic => {
+      this.winningsGraphics.forEach((winningGraphic) => {
         this.removeChild(winningGraphic);
       });
 
@@ -115,7 +120,15 @@ export class SlotMachine extends PIXI.Container {
         );
       };
 
-      socket.spin(globalSettings.stake, afterSpinEvent);
+      if (globalSettings.idCheat < 0) {
+        socket.spin(globalSettings.stake, afterSpinEvent);
+      } else {
+        socket.cheat(
+          globalSettings.stake,
+          globalSettings.idCheat,
+          afterSpinEvent
+        );
+      }
       globalSettings.lastRoundStake = globalSettings.stake;
       globalSettings.lastRoundWinning = 0;
 
@@ -146,9 +159,22 @@ export class SlotMachine extends PIXI.Container {
           this.paylineGraphics.push(paylineGraphic);
 
           const reelsWindowBounds = this.calculateBoundsReelsWindow();
-          const winAnimation:WinAnimation = new WinAnimation(amountTotalWin, reelsWindowBounds.reelsWindowX + reelsWindowBounds.reelsWindowWidth/2, reelsWindowBounds.reelsWindowY + reelsWindowBounds.reelsWindowHeight/2, reelsWindowBounds.reelsWindowX, reelsWindowBounds.reelsWindowWidth);
+          const winAnimation: WinAnimation = new WinAnimation(
+            amountTotalWin,
+            reelsWindowBounds.reelsWindowX +
+              reelsWindowBounds.reelsWindowWidth / 2,
+            reelsWindowBounds.reelsWindowY +
+              reelsWindowBounds.reelsWindowHeight / 2,
+            reelsWindowBounds.reelsWindowX,
+            reelsWindowBounds.reelsWindowWidth
+          );
           this.addChild(winAnimation);
           this.winningsGraphics.push(winAnimation);
+
+          this.removeChild(this.stakeSelectOneBox);
+          this.removeChild(this.cheatPanelSelectOneBox);
+          this.addChild(this.stakeSelectOneBox);
+          this.addChild(this.cheatPanelSelectOneBox);
         });
 
         globalSettings.moneyBalance = this.lastSpinResponse.moneyBalance;
@@ -160,8 +186,15 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private createFrameRateInfo = () => {
-    const { frameRateX, frameRateY } = this.calculateBoundsFrameRateInfo();
-    this.frameRateInfo = new FrameRateInfo(frameRateX, frameRateY);
+    const frameRateInfoBounds = this.calculateBoundsFrameRateInfo();
+    this.frameRateInfo = new FrameRateInfo(
+      frameRateInfoBounds.frameRateX,
+      frameRateInfoBounds.frameRateY,
+      frameRateInfoBounds.frameRateInfoWidth,
+      frameRateInfoBounds.frameRateInfoHeight,
+      frameRateInfoBounds.barX,
+      frameRateInfoBounds.barY
+    );
   };
 
   private createReelsWindow = () => {
@@ -212,6 +245,36 @@ export class SlotMachine extends PIXI.Container {
     );
   };
 
+  private createCheatPanel = () => {
+    const cheatPanelBounds = this.calculateBoundsCheatPanelSelectOneBox();
+
+    const options: Option[] = [];
+    options.push({ value: -1, description: "Regular spin" });
+    options.push({ value: 0, description: "1 pyl: 3 c" });
+    options.push({ value: 1, description: "1 pyl: 4 c" });
+    options.push({ value: 2, description: "1 pyl: 5 c" });
+    options.push({ value: 3, description: "2 pyl: 4 & 4 c" });
+    options.push({ value: 4, description: "3 pyl: 4, 4 & 4 c" });
+    options.push({ value: 5, description: "2 pyl: 5 & 3 c" });
+    options.push({ value: 6, description: "3 pyl: 5, 3 & 3 c" });
+    options.push({ value: 7, description: "3 pyl: 5, 4 & 3 c" });
+
+    const setCheatStatus = (idCheat: number) => {
+      globalSettings.idCheat = idCheat;
+    };
+
+    this.cheatPanelSelectOneBox = new SelectOneBox(
+      cheatPanelBounds.cheatPanelSelectOneBoxWidth,
+      cheatPanelBounds.cheatPanelSelectOneBoxHeight,
+      cheatPanelBounds.cheatPanelSelectOneBoxX,
+      cheatPanelBounds.cheatPanelSelectOneBoxY,
+      options,
+      options[0],
+      "cheat",
+      setCheatStatus
+    );
+  };
+
   private calculateBoundsPlayButton = () => {
     const buttonWidth = globalSettings.slotMachineWidth * 0.25;
     const buttonHeight = globalSettings.slotMachineHeight * 0.2;
@@ -228,11 +291,29 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private calculateBoundsFrameRateInfo = () => {
+    const frameRateInfoWidth = globalSettings.slotMachineWidth * 0.75;
+    const frameRateInfoHeight = globalSettings.slotMachineHeight * 0.05;
+
     const frameRateX = globalSettings.slotMachinePosX;
     const frameRateY =
-      globalSettings.slotMachinePosY + globalSettings.slotMachineHeight - 20;
+      globalSettings.slotMachinePosY +
+      globalSettings.slotMachineHeight -
+      frameRateInfoHeight / 2;
 
-    return { frameRateX, frameRateY };
+    const barX = globalSettings.slotMachinePosX;
+    const barY =
+      globalSettings.slotMachinePosY +
+      globalSettings.slotMachineHeight -
+      frameRateInfoHeight;
+
+    return {
+      frameRateX,
+      frameRateY,
+      frameRateInfoWidth,
+      frameRateInfoHeight,
+      barX,
+      barY,
+    };
   };
 
   private calculateBoundsReelsWindow = () => {
@@ -257,13 +338,35 @@ export class SlotMachine extends PIXI.Container {
     const stakeSelectOneBoxY =
       globalSettings.slotMachinePosY +
       globalSettings.slotMachineHeight -
-      stakeSelectOneBoxHeight;
+      stakeSelectOneBoxHeight * 2;
 
     return {
       stakeSelectOneBoxWidth,
       stakeSelectOneBoxHeight,
       stakeSelectOneBoxX,
       stakeSelectOneBoxY,
+    };
+  };
+
+  private calculateBoundsCheatPanelSelectOneBox = () => {
+    const cheatPanelSelectOneBoxWidth = globalSettings.slotMachineWidth * 0.2;
+    const cheatPanelSelectOneBoxHeight =
+      globalSettings.slotMachineHeight * 0.05;
+    const cheatPanelSelectOneBoxX =
+      globalSettings.slotMachinePosX +
+      globalSettings.slotMachineWidth -
+      globalSettings.slotMachineWidth * 0.25 -
+      cheatPanelSelectOneBoxWidth * 2;
+    const cheatPanelSelectOneBoxY =
+      globalSettings.slotMachinePosY +
+      globalSettings.slotMachineHeight -
+      cheatPanelSelectOneBoxHeight * 2;
+
+    return {
+      cheatPanelSelectOneBoxWidth,
+      cheatPanelSelectOneBoxHeight,
+      cheatPanelSelectOneBoxX,
+      cheatPanelSelectOneBoxY,
     };
   };
 
@@ -279,9 +382,13 @@ export class SlotMachine extends PIXI.Container {
     this.playButton.buttonY = buttonY;
     this.playButton.resize();
 
-    const { frameRateX, frameRateY } = this.calculateBoundsFrameRateInfo();
-    this.frameRateInfo.textX = frameRateX;
-    this.frameRateInfo.textY = frameRateY;
+    const frameRateInfoBounds = this.calculateBoundsFrameRateInfo();
+    this.frameRateInfo.textX = frameRateInfoBounds.frameRateX;
+    this.frameRateInfo.textY = frameRateInfoBounds.frameRateY;
+    this.frameRateInfo.barX = frameRateInfoBounds.barX;
+    this.frameRateInfo.barY = frameRateInfoBounds.barY;
+    this.frameRateInfo.barWidth = frameRateInfoBounds.frameRateInfoWidth;
+    this.frameRateInfo.barHeight = frameRateInfoBounds.frameRateInfoHeight;
     this.frameRateInfo.resize();
 
     const { reelsWindowWidth, reelsWindowHeight, reelsWindowX, reelsWindowY } =

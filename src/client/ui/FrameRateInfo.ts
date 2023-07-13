@@ -3,15 +3,33 @@ import { globalSettings } from "../GlobalSettings.ts";
 
 export class FrameRateInfo extends PIXI.Container {
   private text = new PIXI.Text();
+  private background = new PIXI.Graphics();
 
   textX: number;
   textY: number;
 
-  constructor(x: number, y: number) {
+  barWidth: number;
+  barHeight: number;
+  barX: number;
+  barY: number;
+
+  constructor(
+    x: number,
+    y: number,
+    barWidth: number,
+    barHeight: number,
+    barX: number,
+    barY: number
+  ) {
     super();
 
     this.textX = x;
     this.textY = y;
+
+    this.barWidth = barWidth;
+    this.barHeight = barHeight;
+    this.barX = barX;
+    this.barY = barY;
 
     this.init();
   }
@@ -30,18 +48,29 @@ export class FrameRateInfo extends PIXI.Container {
         } USD\t\t\tLast round Winning: ${globalSettings.lastRoundWinning} USD`)
     );
 
+    this.addChild(this.background);
     this.addChild(this.text);
   };
 
   private draw = () => {
+    this.text.anchor.y = 0.5;
     this.text.x = this.textX;
     this.text.y = this.textY;
 
     this.text.style = {
       fontFamily: "Verdana",
       fontSize: 12,
-      fill: ["#000000"],
+      fill: ["#FFFFFF"],
     };
+
+    this.background.beginFill(0x5d5d5d);
+    this.background.drawRect(
+      this.barX,
+      this.barY,
+      this.barWidth,
+      this.barHeight
+    );
+    this.background.endFill();
   };
 
   resize = () => {

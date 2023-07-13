@@ -17,6 +17,7 @@ export interface RequestValues {
   action: string;
   user: string;
   stake: number;
+  idCheat: number | undefined;
 }
 
 export interface RequestInfo {

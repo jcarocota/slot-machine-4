@@ -3,6 +3,7 @@ import { SymbolSlot } from "./ws/InterfaceResponse.ts";
 import { gameConfig } from "./config/GameConfig.ts";
 
 interface GlobalSettings {
+  idCheat: number;
   lastRoundStake: number;
   lastRoundWinning: number;
   moneyBalance: number | undefined;
@@ -25,6 +26,7 @@ interface GlobalSettings {
 }
 
 export const globalSettings: GlobalSettings = {
+  idCheat: -1,
   lastRoundStake: 0,
   lastRoundWinning: 0,
   moneyBalance: undefined,

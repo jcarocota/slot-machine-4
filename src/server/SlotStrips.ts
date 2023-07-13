@@ -33,7 +33,7 @@ strips.push([
   symbol00,
   symbol03,
   symbol02,
-  wildcardSymbol
+  wildcardSymbol,
 ]);
 
 //Strip #02
@@ -54,7 +54,7 @@ strips.push([
   symbol03,
   symbol01,
   symbol00,
-  wildcardSymbol
+  wildcardSymbol,
 ]);
 
 //Strip #03
@@ -75,7 +75,7 @@ strips.push([
   symbol01,
   symbol00,
   symbol02,
-  wildcardSymbol
+  wildcardSymbol,
 ]);
 
 //Strip #04
@@ -96,7 +96,7 @@ strips.push([
   symbol01,
   symbol03,
   symbol00,
-  wildcardSymbol
+  wildcardSymbol,
 ]);
 
 //Strip #05
@@ -117,7 +117,7 @@ strips.push([
   symbol01,
   symbol03,
   symbol00,
-  wildcardSymbol
+  wildcardSymbol,
 ]);
 
 symbols.push(symbol00);
