@@ -2,7 +2,23 @@ import * as PIXI from "pixi.js";
 import { globalSettings } from "../GlobalSettings.ts";
 import { gameConfig } from "../config/GameConfig.ts";
 
+export type stateUI = {
+  backgroundColor: number;
+  textColor: string;
+};
+
 export class InfoBar extends PIXI.Container {
+  setInfoBarUI = (backgroundColor: number, textColor: string) => {
+    this._infoBarUI.backgroundColor = backgroundColor;
+    this._infoBarUI.textColor = textColor;
+    this.resize();
+  };
+
+  private _infoBarUI: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+    textColor: gameConfig.textDefaultColor,
+  };
+
   private text = new PIXI.Text();
   private background = new PIXI.Graphics();
 
@@ -61,10 +77,10 @@ export class InfoBar extends PIXI.Container {
     this.text.style = {
       fontFamily: "Verdana",
       fontSize: 12,
-      fill: ["#FFFFFF"],
+      fill: [this._infoBarUI.textColor],
     };
 
-    this.background.beginFill(gameConfig.backgroundInfoBarColor);
+    this.background.beginFill(this._infoBarUI.backgroundColor);
     this.background.drawRect(
       this.barX,
       this.barY,
@@ -75,6 +91,7 @@ export class InfoBar extends PIXI.Container {
   };
 
   resize = () => {
+    this.background.clear();
     this.draw();
   };
 }

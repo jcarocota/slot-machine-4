@@ -1,4 +1,4 @@
-interface GameConfig {
+/*interface GameConfig {
   aspectRatioWidth: number;
   aspectRatioHeight: number;
   backgroundAppColor: number;
@@ -20,22 +20,16 @@ interface GameConfig {
   slotMachineDebugModeSheet: string;
   wsUrl: string;
   wsPort: number;
-}
+}*/
 
-export const gameConfig: GameConfig = {
+export const gameConfig = {
   aspectRatioWidth: 4,
   aspectRatioHeight: 3,
   backgroundAppColor: 0xffffff,
   backgroundSlotMachineColor: 0xd5d8dc,
   backgroundReelColor: 0x0d2331,
-  backgroundButtonDefaultColor: 0x2ecc71,
-  backgroundInfoBarColor: 0x5d5d5d,
-  backgroundPlayButtonIdleColor: 0x2ecc71,
-  backgroundPlayButtonDisabledColor: 0x566573,
-  backgroundPlayButtonHoverColor: 0xf4d03f,
-  textPlayButtonIdle: "Ready to play!",
-  textPlayButtonDisabled: "Spinning...",
-  textPlayButtonHover: "Click now!",
+  backgroundDefaultColor: 0x000000,
+  textDefaultColor: "#FFFFFF",
   debugMode: 1,
   questionMarkAsset: "./src/client/assets/question_mark.png",
   slotMachineSheet: "./src/client/assets/fruits-normal.json", //Path of slot machine sprites' atlas
@@ -43,6 +37,30 @@ export const gameConfig: GameConfig = {
   slotMachineSemiBlurredSheet: "./src/client/assets/fruits-medium-blur.json", //Path of slot machine sprites' atlas
   slotMachineDebugModeSheet:
     "./src/client/assets/fruits-normal-debug-mode.json", //Path of slot machine sprites' atlas
+  infoBarUI: {
+    backgroundColor: 0x8b8b8b,
+    textColor: "#FFFFFF",
+  },
+  playButtonUI: {
+    backgroundIdleColor: 0x2ecc71,
+    backgroundDisabledColor: 0x566573,
+    backgroundHoverColor: 0xf4d03f,
+    textIdle: "Ready to play!",
+    textDisabled: "Spinning...",
+    textHover: "Click now!",
+  },
+  stakeSelectBoxUI: {
+    backgroundDisabledColor: 0x566573,
+    backgroundIdleColor: 0x00b3ff,
+    backgroundOptionsIdleColor: 0x71c8ed,
+    backgroundHoverColor: 0xfffc74,
+  },
+  cheatPanelSelectBoxUI: {
+    backgroundDisabledColor: 0x566573,
+    backgroundIdleColor: 0xff5d00,
+    backgroundOptionsIdleColor: 0xff8a47,
+    backgroundHoverColor: 0xfffc74,
+  },
   wsUrl: "192.168.1.106",
   wsPort: 3000,
 };

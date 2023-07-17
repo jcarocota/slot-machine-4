@@ -74,16 +74,16 @@ export class SlotMachine extends PIXI.Container {
     this.playButton = new Button(buttonWidth, buttonHeight, buttonX, buttonY);
 
     this.playButton.setButtonUIReady(
-      gameConfig.backgroundPlayButtonIdleColor,
-      gameConfig.textPlayButtonIdle
+      gameConfig.playButtonUI.backgroundIdleColor,
+      gameConfig.playButtonUI.textIdle
     );
     this.playButton.setButtonUIDisabled(
-      gameConfig.backgroundPlayButtonDisabledColor,
-      gameConfig.textPlayButtonDisabled
+      gameConfig.playButtonUI.backgroundDisabledColor,
+      gameConfig.playButtonUI.textDisabled
     );
     this.playButton.setButtonUIPointerHover(
-      gameConfig.backgroundPlayButtonHoverColor,
-      gameConfig.textPlayButtonHover
+      gameConfig.playButtonUI.backgroundHoverColor,
+      gameConfig.playButtonUI.textHover
     );
 
     this.playButton.buttonState = ButtonState.ready;
@@ -205,6 +205,11 @@ export class SlotMachine extends PIXI.Container {
       frameRateInfoBounds.barX,
       frameRateInfoBounds.barY
     );
+
+    this.infoBar.setInfoBarUI(
+      gameConfig.infoBarUI.backgroundColor,
+      gameConfig.infoBarUI.textColor
+    );
   };
 
   private createReelsWindow = () => {
@@ -220,12 +225,7 @@ export class SlotMachine extends PIXI.Container {
   };
 
   private createStakeSelectOneBox = () => {
-    const {
-      stakeSelectOneBoxWidth,
-      stakeSelectOneBoxHeight,
-      stakeSelectOneBoxX,
-      stakeSelectOneBoxY,
-    } = this.calculateBoundsStakeSelectOneBox();
+    const stakeSelectOneBoxBounds = this.calculateBoundsStakeSelectOneBox();
     const options: Option[] = [];
     options.push({ value: 1, description: "1.00 USD" });
     options.push({ value: 1.5, description: "1.50 USD" });
@@ -244,15 +244,22 @@ export class SlotMachine extends PIXI.Container {
     };
 
     this.stakeSelectOneBox = new SelectOneBox(
-      stakeSelectOneBoxWidth,
-      stakeSelectOneBoxHeight,
-      stakeSelectOneBoxX,
-      stakeSelectOneBoxY,
+      stakeSelectOneBoxBounds.stakeSelectOneBoxWidth,
+      stakeSelectOneBoxBounds.stakeSelectOneBoxHeight,
+      stakeSelectOneBoxBounds.stakeSelectOneBoxX,
+      stakeSelectOneBoxBounds.stakeSelectOneBoxY,
       options,
       options[0],
       "Stake",
       setStakeInfo
     );
+
+    this.stakeSelectOneBox.boxUIReady =
+      gameConfig.stakeSelectBoxUI.backgroundIdleColor;
+    this.stakeSelectOneBox.boxUIOptions =
+      gameConfig.stakeSelectBoxUI.backgroundOptionsIdleColor;
+    this.stakeSelectOneBox.boxUIPointerHover =
+      gameConfig.stakeSelectBoxUI.backgroundHoverColor;
   };
 
   private createCheatPanel = () => {
@@ -283,6 +290,13 @@ export class SlotMachine extends PIXI.Container {
       "cheat",
       setCheatStatus
     );
+
+    this.cheatPanelSelectOneBox.boxUIReady =
+      gameConfig.cheatPanelSelectBoxUI.backgroundIdleColor;
+    this.cheatPanelSelectOneBox.boxUIOptions =
+      gameConfig.cheatPanelSelectBoxUI.backgroundOptionsIdleColor;
+    this.cheatPanelSelectOneBox.boxUIPointerHover =
+      gameConfig.cheatPanelSelectBoxUI.backgroundHoverColor;
   };
 
   private calculateBoundsPlayButton = () => {
@@ -407,17 +421,28 @@ export class SlotMachine extends PIXI.Container {
     this.reelsWindow.reelsWindowY = reelsWindowBounds.reelsWindowY;
     this.reelsWindow.resize();
 
-    const {
-      stakeSelectOneBoxWidth,
-      stakeSelectOneBoxHeight,
-      stakeSelectOneBoxX,
-      stakeSelectOneBoxY,
-    } = this.calculateBoundsStakeSelectOneBox();
-    this.stakeSelectOneBox.selectOneBoxWidth = stakeSelectOneBoxWidth;
-    this.stakeSelectOneBox.selectOneBoxHeight = stakeSelectOneBoxHeight;
-    this.stakeSelectOneBox.selectOneBoxX = stakeSelectOneBoxX;
-    this.stakeSelectOneBox.selectOneBoxY = stakeSelectOneBoxY;
+    const stakeSelectOneBoxBounds = this.calculateBoundsStakeSelectOneBox();
+    this.stakeSelectOneBox.selectOneBoxWidth =
+      stakeSelectOneBoxBounds.stakeSelectOneBoxWidth;
+    this.stakeSelectOneBox.selectOneBoxHeight =
+      stakeSelectOneBoxBounds.stakeSelectOneBoxHeight;
+    this.stakeSelectOneBox.selectOneBoxX =
+      stakeSelectOneBoxBounds.stakeSelectOneBoxX;
+    this.stakeSelectOneBox.selectOneBoxY =
+      stakeSelectOneBoxBounds.stakeSelectOneBoxY;
     this.stakeSelectOneBox.resize();
+
+    const cheatPanelSelectOneBoxBounds =
+      this.calculateBoundsCheatPanelSelectOneBox();
+    this.cheatPanelSelectOneBox.selectOneBoxWidth =
+      cheatPanelSelectOneBoxBounds.cheatPanelSelectOneBoxWidth;
+    this.cheatPanelSelectOneBox.selectOneBoxHeight =
+      cheatPanelSelectOneBoxBounds.cheatPanelSelectOneBoxHeight;
+    this.cheatPanelSelectOneBox.selectOneBoxX =
+      cheatPanelSelectOneBoxBounds.cheatPanelSelectOneBoxX;
+    this.cheatPanelSelectOneBox.selectOneBoxY =
+      cheatPanelSelectOneBoxBounds.cheatPanelSelectOneBoxY;
+    this.cheatPanelSelectOneBox.resize();
 
     this.paylineGraphics.forEach((paylineGraphic) => {
       paylineGraphic.slotWidth = reelsWindowBounds.reelsWindowWidth / 5;
@@ -425,6 +450,29 @@ export class SlotMachine extends PIXI.Container {
       paylineGraphic.reelsWindowX = reelsWindowBounds.reelsWindowX;
       paylineGraphic.reelsWindowY = reelsWindowBounds.reelsWindowY;
       paylineGraphic.resize();
+    });
+
+    this.winningsGraphics.forEach((winAnimation) => {
+      /*
+      * const winAnimation: WinAnimation = new WinAnimation(
+            amountTotalWin,
+            reelsWindowBounds.reelsWindowX +
+              reelsWindowBounds.reelsWindowWidth / 2,
+            reelsWindowBounds.reelsWindowY +
+              reelsWindowBounds.reelsWindowHeight / 2,
+            reelsWindowBounds.reelsWindowX,
+            reelsWindowBounds.reelsWindowWidth
+          );
+      * */
+      winAnimation.posX =
+        reelsWindowBounds.reelsWindowX + reelsWindowBounds.reelsWindowWidth / 2;
+      winAnimation.posY =
+        reelsWindowBounds.reelsWindowY +
+        reelsWindowBounds.reelsWindowHeight / 2;
+      winAnimation.reelsWindowX = reelsWindowBounds.reelsWindowX;
+      winAnimation.reelsWindowWidth = reelsWindowBounds.reelsWindowWidth;
+
+      winAnimation.resize();
     });
   };
 }

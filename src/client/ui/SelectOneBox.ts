@@ -1,10 +1,15 @@
 import * as PIXI from "pixi.js";
+import { gameConfig } from "../config/GameConfig.ts";
 
 //https://codesandbox.io/s/pixi-select-oodt3d?file=/src/select.js:4032-4066
 
 export type Option = {
   value: number;
   description: string;
+};
+
+export type stateUI = {
+  backgroundColor: number;
 };
 
 export type MenuBackgroundOption = {
@@ -17,7 +22,21 @@ export type MenuBackgroundOption = {
   bottom: number;
 };
 export class SelectOneBox extends PIXI.Container {
+  set boxUIOptions(backgroundColor: number) {
+    this._boxUIOptions.backgroundColor = backgroundColor;
+    this.resize();
+  }
+  set boxUIPointerHover(backgroundColor: number) {
+    this._boxUIPointerHover.backgroundColor = backgroundColor;
+    this.resize();
+  }
+  set boxUIReady(backgroundColor: number) {
+    this._boxUIReady.backgroundColor = backgroundColor;
+  }
+
   private options: Option[];
+
+  private baseBackgroundColor = 0xffffff;
 
   private background = new PIXI.Graphics();
   private downArrow = new PIXI.Graphics();
@@ -34,6 +53,18 @@ export class SelectOneBox extends PIXI.Container {
   selectOneBoxY: number;
   labelText: string;
   selectionEvent: (info: any) => void;
+
+  private _boxUIReady: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+  };
+
+  private _boxUIPointerHover: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+  };
+
+  private _boxUIOptions: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+  };
 
   constructor(
     selectOneBoxWidth: number,
@@ -94,7 +125,7 @@ export class SelectOneBox extends PIXI.Container {
   };
 
   private draw = () => {
-    this.background.beginFill(0xffc800);
+    this.background.beginFill(this.baseBackgroundColor);
     this.background.drawRect(
       this.selectOneBoxX,
       this.selectOneBoxY,
@@ -103,6 +134,9 @@ export class SelectOneBox extends PIXI.Container {
     );
     this.background.endFill();
 
+    this.background.tint = this._boxUIReady.backgroundColor;
+
+    /*
     const triangleSideSize = this.width * 0.1;
     const triangleHalfway = triangleSideSize / 2;
 
@@ -116,6 +150,7 @@ export class SelectOneBox extends PIXI.Container {
       this.selectOneBoxX + this.selectOneBoxWidth - triangleSideSize * 1.5;
     this.downArrow.position.y =
       this.selectOneBoxY + this.selectOneBoxHeight / 2;
+      */
 
     this.selectedText.anchor.y = 0.5;
     this.selectedText.x = this.selectOneBoxX + this.selectOneBoxWidth * 0.1;
@@ -124,7 +159,7 @@ export class SelectOneBox extends PIXI.Container {
     this.menu.visible = false;
 
     this.menuBackgroundOptions.forEach((menuBackgroundOption, index) => {
-      menuBackgroundOption.background.beginFill(0xffc800);
+      menuBackgroundOption.background.beginFill(this.baseBackgroundColor);
 
       const optionX = this.selectOneBoxX;
       const optionY =
@@ -149,6 +184,8 @@ export class SelectOneBox extends PIXI.Container {
       menuBackgroundOption.right = optionX + this.selectOneBoxWidth;
       menuBackgroundOption.top = optionY;
       menuBackgroundOption.bottom = optionY + this.selectOneBoxHeight;
+
+      menuBackgroundOption.background.tint = this._boxUIOptions.backgroundColor;
     });
   };
 
@@ -230,24 +267,26 @@ export class SelectOneBox extends PIXI.Container {
     //console.log("bounds:", bounds, "mouseY:",mouseY);
 
     if (mouseY < bounds.bottom && mouseY > this.selectOneBoxY) {
-      this.background.alpha = 0.6;
+      this.background.tint = this._boxUIPointerHover.backgroundColor;
     }
 
     this.menuBackgroundOptions.forEach((menuBackgroundOption) => {
       //menuBackgroundOption.background.alpha = 0.6;
-      menuBackgroundOption.background.alpha =
+      menuBackgroundOption.background.tint =
         mouseY < menuBackgroundOption.bottom &&
         mouseY > menuBackgroundOption.top
-          ? 0.6
-          : 1;
+          ? this._boxUIPointerHover.backgroundColor
+          : this._boxUIOptions.backgroundColor;
     });
   };
 
   private unhighlightElements = () => {
-    this.background.alpha = 1;
+    //this.background.alpha = 1;
     this.menuBackgroundOptions.forEach((menuBackgroundOption) => {
-      menuBackgroundOption.background.alpha = 1;
+      menuBackgroundOption.background.tint = this._boxUIOptions.backgroundColor;
     });
+
+    this.background.tint = this._boxUIReady.backgroundColor;
   };
 
   private selectNewValue = (mouseX: number, mouseY: number) => {

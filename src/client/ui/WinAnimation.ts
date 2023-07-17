@@ -8,11 +8,11 @@ export class WinAnimation extends PIXI.Container {
   private winAmountTitle: PIXI.Text = new PIXI.Text();
   private styleTitle: PIXI.TextStyle = new PIXI.TextStyle();
   private styleWinAmountTitle: PIXI.TextStyle = new PIXI.TextStyle();
-  private posX: number;
-  private posY: number;
-  private reelsWindowX: number;
+  posX: number;
+  posY: number;
+  reelsWindowX: number;
   // @ts-ignore
-  private reelsWindowWidth: number;
+  reelsWindowWidth: number;
   private offsetYTittle = 50;
 
   constructor(
@@ -65,6 +65,11 @@ export class WinAnimation extends PIXI.Container {
       wordWrapWidth: 440,
       lineJoin: "round",
     });
+    this.textTitle = new PIXI.Text("¡Win!", this.styleTitle);
+    this.winAmountTitle = new PIXI.Text(
+      `$ ${this.winAmount.toFixed(2)} USD`,
+      this.styleWinAmountTitle
+    );
 
     this.draw();
 
@@ -76,15 +81,10 @@ export class WinAnimation extends PIXI.Container {
   };
 
   private draw = () => {
-    this.textTitle = new PIXI.Text("¡Win!", this.styleTitle);
     this.textTitle.anchor.set(0.5);
     this.textTitle.x = this.posX;
     this.textTitle.y = this.posY - this.offsetYTittle;
 
-    this.winAmountTitle = new PIXI.Text(
-      `$ ${this.winAmount.toFixed(2)} USD`,
-      this.styleWinAmountTitle
-    );
     this.winAmountTitle.anchor.set(0.5);
     this.winAmountTitle.x = this.posX;
     this.winAmountTitle.y = this.posY + this.offsetYTittle;
@@ -116,5 +116,7 @@ export class WinAnimation extends PIXI.Container {
     requestAnimationFrame(moneyAnimate);
   };
 
-  resize = () => {};
+  resize = () => {
+    this.draw();
+  };
 }

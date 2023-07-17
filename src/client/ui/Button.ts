@@ -18,16 +18,28 @@ export class Button extends PIXI.Container {
   private _pointerOut: () => void;
 
   private defaultUI: stateUI = {
-    backgroundColor: gameConfig.backgroundButtonDefaultColor,
+    backgroundColor: gameConfig.backgroundDefaultColor,
     textLabel: "",
     state: ButtonState.ready,
   };
 
   private buttonUI: stateUI = this.defaultUI;
 
-  private _buttonUIReady: stateUI | undefined;
-  private _buttonUIDisabled: stateUI | undefined;
-  private _buttonUIPointerHover: stateUI | undefined;
+  private _buttonUIReady: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+    textLabel: "",
+    state: ButtonState.ready,
+  };
+  private _buttonUIDisabled: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+    textLabel: "",
+    state: ButtonState.disabled,
+  };
+  private _buttonUIPointerHover: stateUI = {
+    backgroundColor: gameConfig.backgroundDefaultColor,
+    textLabel: "",
+    state: ButtonState.pointerhover,
+  };
 
   private _buttonState: ButtonState = ButtonState.ready;
 
